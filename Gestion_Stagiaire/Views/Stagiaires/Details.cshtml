@@ -10,53 +10,68 @@
     <h4>Stagiaire</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            Photo
+        </dt>
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.Path_Photo))
+            {
+                <img src="~/uploads/photos/@Model.Path_Photo" alt="Photo de @Model.Nom" style="max-width: 50px; max-height: 50px;" />
+            }
+            else
+            {
+                <p>Aucune photo disponible</p>
+            }
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nom)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Nom)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Prenom)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Prenom)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Cin)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Cin)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Telephone)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Telephone)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Ecole)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Ecole)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Path_Photo)
+       
+        <dt class="col-sm-2">
+            CV
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Path_Photo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Path_CV)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Path_CV)
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.Path_CV))
+            {
+                <a href="~/uploads/cvs/@Model.Path_CV" target="_blank">Voir le CV</a>
+            }
+            else
+            {
+                <p>Aucun CV disponible</p>
+            }
         </dd>
     </dl>
 </div>

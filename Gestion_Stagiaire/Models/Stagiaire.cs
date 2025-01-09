@@ -9,7 +9,7 @@ namespace Gestion_Stagiaires.Models
         public String Prenom { get; set; }
         public String Cin { get; set; }
         public int Telephone { get; set; }
-        public String Email { get; set; }
+        public String Email { get; set; } 
         public String Ecole { get; set; }
         public String? Path_Photo { get; set; }
         public String? Path_CV { get; set; }

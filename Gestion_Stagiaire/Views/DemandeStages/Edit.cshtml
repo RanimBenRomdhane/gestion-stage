@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -25,12 +25,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Date_Debut" class="control-label"></label>
-                <input asp-for="Date_Debut" class="form-control" />
+                <input asp-for="Date_Debut" class="form-control" type="date" value="@Model.Date_Debut.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Date_Debut" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Date_Fin" class="control-label"></label>
-                <input asp-for="Date_Fin" class="form-control" />
+                <input asp-for="Date_Fin" class="form-control" type="date" value="@Model.Date_Fin.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Date_Fin" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -39,13 +39,14 @@
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Path_Demande_Stage" class="control-label"></label>
-                <input asp-for="Path_Demande_Stage" class="form-control" />
+                <label asp-for="Path_Demande_Stage" class="control-label">Demande Stage File</label>
+                <input asp-for="Path_Demande_Stage" class="form-control" type="file" />
                 <span asp-validation-for="Path_Demande_Stage" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Date_Demande" class="control-label"></label>
-                <input asp-for="Date_Demande" class="form-control" />
+                <input asp-for="Date_Demande" class="form-control" type="datetime-local" value="@Model.Date_Demande.ToString("yyyy-MM-ddTHH:mm")" readonly />
                 <span asp-validation-for="Date_Demande" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -70,5 +71,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

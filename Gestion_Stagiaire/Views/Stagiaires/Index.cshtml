@@ -4,14 +4,21 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Stagiaires</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<p>
+    <a asp-action="ExportToExcel" class="btn btn-success">Export to Excel</a>
+</p>
 <table class="table">
     <thead>
         <tr>
+            <th>
+                Photo
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nom)
             </th>
@@ -30,48 +37,62 @@
             <th>
                 @Html.DisplayNameFor(model => model.Ecole)
             </th>
+           
             <th>
-                @Html.DisplayNameFor(model => model.Path_Photo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Path_CV)
+                CV
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nom)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Prenom)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telephone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ecole)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Path_Photo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Path_CV)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Path_Photo))
+                    {
+                        <img src="~/uploads/photos/@item.Path_Photo" alt="Photo de @item.Nom" style="max-width: 50; max-height: 50px;" />
+                    }
+                    else
+                    {
+                        <p>Aucune photo disponible</p>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Prenom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cin)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telephone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ecole)
+                </td>
+                
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Path_CV))
+                    {
+                        <a href="~/uploads/cvs/@item.Path_CV" target="_blank">Voir le CV</a>
+                    }
+                    else
+                    {
+                        <p>Aucun CV disponible</p>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

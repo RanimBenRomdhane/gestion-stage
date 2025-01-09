@@ -4,16 +4,19 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Demande de stage</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
+</p>
+<p>
+    <a asp-action="ExportToExcel" class="btn btn-success">Export to Excel</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Stagiaire)
+                Stagiaire
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Type_Stage)
@@ -28,7 +31,7 @@
                 @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Path_Demande_Stage)
+                Demande Stage
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Date_Demande)
@@ -43,41 +46,50 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stagiaire.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type_Stage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date_Debut)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date_Fin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Path_Demande_Stage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date_Demande)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Affectation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Commentaire)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Stagiaire.Nom @item.Stagiaire.Prenom
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type_Stage)
+                </td>
+                <td>
+                    @item.Date_Debut.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    @item.Date_Fin.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
+                    {
+                        <a href="~/uploads/demandes/@item.Path_Demande_Stage" target="_blank">Voir la Demande de Stage</a>
+                    }
+                    else
+                    {
+                        <p>Aucune demande de stage disponible</p>
+                    }
+                </td>
+                
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date_Demande)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Affectation)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Commentaire)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

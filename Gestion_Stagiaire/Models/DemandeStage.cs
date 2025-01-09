@@ -1,4 +1,5 @@
 ﻿using Gestion_Stagiaires.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Gestion_Stagiaire.Models
 {
@@ -11,7 +12,7 @@ namespace Gestion_Stagiaire.Models
         public DateTime Date_Debut { get; set; }
         public DateTime Date_Fin { get; set; }
         public String Status { get; set; }
-        public String Path_Demande_Stage { get; set; }
+        public String? Path_Demande_Stage { get; set; }
         public DateTime Date_Demande { get; set; }
         public String Affectation { get; set; }
         public String? Commentaire { get; set; }

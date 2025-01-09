@@ -10,58 +10,66 @@
     <h4>DemandeStage</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Stagiaire)
+        <dt class="col-sm-2">
+            Stagiaire
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Stagiaire.Id)
+        <dd class="col-sm-10">
+            @Model.Stagiaire.Nom @Model.Stagiaire.Prenom
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Type_Stage)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Type_Stage)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Date_Debut)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date_Debut)
+        <dd class="col-sm-10">
+            @Model.Date_Debut.ToString("yyyy-MM-dd")
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Date_Fin)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date_Fin)
+        <dd class="col-sm-10">
+            @Model.Date_Fin.ToString("yyyy-MM-dd")
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Status)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Status)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Path_Demande_Stage)
+        <dt class="col-sm-2">
+            Demande Stage
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Path_Demande_Stage)
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.Path_Demande_Stage))
+            {
+                <a href="~/uploads/demandes/@Model.Path_Demande_Stage" target="_blank">Voir la Demande de Stage</a>
+            }
+            else
+            {
+                <p>Aucune demande de stage disponible</p>
+            }
         </dd>
-        <dt class = "col-sm-2">
+
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Date_Demande)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Date_Demande)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Affectation)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Affectation)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Commentaire)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Commentaire)
         </dd>
     </dl>

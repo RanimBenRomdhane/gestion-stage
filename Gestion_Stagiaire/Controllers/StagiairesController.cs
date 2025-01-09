@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 using Gestion_Stagiaire.Data;
+using Gestion_Stagiaire.Models;
 using Gestion_Stagiaires.Models;
 
 namespace Gestion_Stagiaire.Controllers
@@ -50,15 +52,56 @@ namespace Gestion_Stagiaire.Controllers
         }
 
         // POST: Stagiaires/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nom,Prenom,Cin,Telephone,Email,Ecole,Path_Photo,Path_CV")] Stagiaire stagiaire)
+        public async Task<IActionResult> Create([Bind("Nom,Prenom,Cin,Telephone,Email,Ecole")] Stagiaire stagiaire, IFormFile Path_Photo, IFormFile Path_CV)
         {
             if (ModelState.IsValid)
             {
                 stagiaire.Id = Guid.NewGuid();
+
+                // Handle Photo upload
+                if (Path_Photo != null && Path_Photo.Length > 0)
+                {
+                    var photoExtension = Path.GetExtension(Path_Photo.FileName);
+                    if (photoExtension.ToLower() != ".png")
+                    {
+                        ModelState.AddModelError("Path_Photo", "The photo must be a .png file.");
+                        return View(stagiaire);
+                    }
+
+                    var photoFileName = $"{stagiaire.Cin}.png";
+                    var photoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/photos", photoFileName);
+
+                    using (var stream = new FileStream(photoPath, FileMode.Create))
+                    {
+                        await Path_Photo.CopyToAsync(stream);
+                    }
+
+                    stagiaire.Path_Photo = photoFileName;
+                }
+
+                // Handle CV upload
+                if (Path_CV != null && Path_CV.Length > 0)
+                {
+                    var cvExtension = Path.GetExtension(Path_CV.FileName);
+                    if (cvExtension.ToLower() != ".pdf")
+                    {
+                        ModelState.AddModelError("Path_CV", "The CV must be a .pdf file.");
+                        return View(stagiaire);
+                    }
+
+                    var cvFileName = $"{stagiaire.Cin}.pdf";
+                    var cvPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/cvs", cvFileName);
+
+                    using (var stream = new FileStream(cvPath, FileMode.Create))
+                    {
+                        await Path_CV.CopyToAsync(stream);
+                    }
+
+                    stagiaire.Path_CV = cvFileName;
+                }
+
                 _context.Add(stagiaire);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -83,11 +126,9 @@ namespace Gestion_Stagiaire.Controllers
         }
 
         // POST: Stagiaires/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nom,Prenom,Cin,Telephone,Email,Ecole,Path_Photo,Path_CV")] Stagiaire stagiaire)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nom,Prenom,Cin,Telephone,Email,Ecole")] Stagiaire stagiaire, IFormFile Path_Photo, IFormFile Path_CV)
         {
             if (id != stagiaire.Id)
             {
@@ -98,6 +139,48 @@ namespace Gestion_Stagiaire.Controllers
             {
                 try
                 {
+                    // Handle Photo upload
+                    if (Path_Photo != null && Path_Photo.Length > 0)
+                    {
+                        var photoExtension = Path.GetExtension(Path_Photo.FileName);
+                        if (photoExtension.ToLower() != ".png")
+                        {
+                            ModelState.AddModelError("Path_Photo", "The photo must be a .png file.");
+                            return View(stagiaire);
+                        }
+
+                        var photoFileName = $"{stagiaire.Cin}.png";
+                        var photoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/photos", photoFileName);
+
+                        using (var stream = new FileStream(photoPath, FileMode.Create))
+                        {
+                            await Path_Photo.CopyToAsync(stream);
+                        }
+
+                        stagiaire.Path_Photo = photoFileName;
+                    }
+
+                    // Handle CV upload
+                    if (Path_CV != null && Path_CV.Length > 0)
+                    {
+                        var cvExtension = Path.GetExtension(Path_CV.FileName);
+                        if (cvExtension.ToLower() != ".pdf")
+                        {
+                            ModelState.AddModelError("Path_CV", "The CV must be a .pdf file.");
+                            return View(stagiaire);
+                        }
+
+                        var cvFileName = $"{stagiaire.Cin}.pdf";
+                        var cvPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/cvs", cvFileName);
+
+                        using (var stream = new FileStream(cvPath, FileMode.Create))
+                        {
+                            await Path_CV.CopyToAsync(stream);
+                        }
+
+                        stagiaire.Path_CV = cvFileName;
+                    }
+
                     _context.Update(stagiaire);
                     await _context.SaveChangesAsync();
                 }
@@ -148,6 +231,48 @@ namespace Gestion_Stagiaire.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // Export to Excel
+        public async Task<IActionResult> ExportToExcel()
+        {
+            var stagiaires = await _context.Stagiaires.ToListAsync();
+
+            // Configure EPPlus to use the non-commercial license
+            OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Stagiaires");
+
+            // Add headers
+            worksheet.Cells[1, 1].Value = "Nom";
+            worksheet.Cells[1, 2].Value = "Prenom";
+            worksheet.Cells[1, 3].Value = "Cin";
+            worksheet.Cells[1, 4].Value = "Email";
+            worksheet.Cells[1, 5].Value = "Telephone";
+            worksheet.Cells[1, 6].Value = "Photo";
+            worksheet.Cells[1, 7].Value = "Cv";
+
+            // Add values
+            for (int i = 0; i < stagiaires.Count; i++)
+            {
+                var row = i + 2;
+                worksheet.Cells[row, 1].Value = stagiaires[i].Nom;
+                worksheet.Cells[row, 2].Value = stagiaires[i].Prenom;
+                worksheet.Cells[row, 3].Value = stagiaires[i].Cin;
+                worksheet.Cells[row, 4].Value = stagiaires[i].Email;
+                worksheet.Cells[row, 5].Value = stagiaires[i].Telephone;
+                worksheet.Cells[row, 6].Value = stagiaires[i].Path_Photo;
+                worksheet.Cells[row, 7].Value = stagiaires[i].Path_CV;
+            }
+
+            var stream = new MemoryStream(package.GetAsByteArray());
+
+            var content = stream.ToArray();
+            var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            var fileName = "Stagiaires.xlsx";
+
+            return File(content, contentType, fileName);
         }
 
         private bool StagiaireExists(Guid id)
