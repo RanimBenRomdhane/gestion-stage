@@ -1,47 +1,38 @@
 ﻿@model IEnumerable<Gestion_Stagiaire.Models.DemandeStage>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Demandes de Stage";
 }
 
-<h1>Demande de stage</h1>
+<h1>Demandes de Stage</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
 <p>
     <a asp-action="ExportToExcel" class="btn btn-success">Export to Excel</a>
 </p>
-<table class="table">
+
+<!-- Barre de recherche -->
+<form method="get" asp-action="Index">
+    <div class="form-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par : Nom, Prenom, Type de Stage, ou Statut..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
+    </div>
+</form>
+
+<table class="table" id="demandesTable">
     <thead>
         <tr>
-            <th>
-                Stagiaire
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type_Stage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date_Debut)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date_Fin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                Demande Stage
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date_Demande)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Affectation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Commentaire)
-            </th>
+            <th>Stagiaire</th>
+            <th>@Html.DisplayNameFor(model => model.Type_Stage)</th>
+            <th>@Html.DisplayNameFor(model => model.Date_Debut)</th>
+            <th>@Html.DisplayNameFor(model => model.Date_Fin)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+            <th>Demande Stage</th>
+            <th>@Html.DisplayNameFor(model => model.Date_Demande)</th>
+            <th>@Html.DisplayNameFor(model => model.Affectation)</th>
+            <th>@Html.DisplayNameFor(model => model.Commentaire)</th>
             <th></th>
         </tr>
     </thead>
@@ -52,18 +43,10 @@
                 <td>
                     @item.Stagiaire.Nom @item.Stagiaire.Prenom
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Type_Stage)
-                </td>
-                <td>
-                    @item.Date_Debut.ToString("yyyy-MM-dd")
-                </td>
-                <td>
-                    @item.Date_Fin.ToString("yyyy-MM-dd")
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.Type_Stage)</td>
+                <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
+                <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
                 <td>
                     @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
                     {
@@ -74,16 +57,9 @@
                         <p>Aucune demande de stage disponible</p>
                     }
                 </td>
-                
-                <td>
-                    @Html.DisplayFor(modelItem => item.Date_Demande)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Affectation)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Commentaire)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.Date_Demande)</td>
+                <td>@Html.DisplayFor(modelItem => item.Affectation)</td>
+                <td>@Html.DisplayFor(modelItem => item.Commentaire)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
@@ -93,3 +69,26 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        function filterResults() {
+            var input = document.getElementById('searchInput');
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById('demandesTable');
+            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var match = false;
+                for (var j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = match ? '' : 'none';
+            }
+        }
+    </script>
+}

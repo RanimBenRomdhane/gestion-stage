@@ -1,9 +1,10 @@
-﻿using OfficeOpenXml;
-using static OfficeOpenXml.ExcelPackage;
+﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Gestion_Stagiaire.Data;
 using Gestion_Stagiaire.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,10 +21,26 @@ namespace Gestion_Stagiaire.Controllers
         }
 
         // GET: DemandeStages
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.DemandesStage.Include(d => d.Stagiaire);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+           
+
+            var demandesStage = from d in _context.DemandesStage.Include(d => d.Stagiaire)
+                                select d;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                demandesStage = demandesStage.Where(d =>
+                    d.Stagiaire.Nom.Contains(searchString)
+                    || d.Stagiaire.Prenom.Contains(searchString)
+                    || d.Type_Stage.Contains(searchString)
+                    || d.Status.Contains(searchString));
+            }
+
+
+
+            return View(await demandesStage.ToListAsync());
         }
 
         // Export to Excel

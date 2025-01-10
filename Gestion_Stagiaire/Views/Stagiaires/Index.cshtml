@@ -13,34 +13,25 @@
 <p>
     <a asp-action="ExportToExcel" class="btn btn-success">Export to Excel</a>
 </p>
-<table class="table">
+
+<!-- Barre de recherche -->
+<form method="get" asp-action="Index">
+    <div class="form-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par Nom, Prenom, CIN, Telephone, ou Ecole..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
+    </div>
+</form>
+
+<table class="table" id="stagiairesTable">
     <thead>
         <tr>
-            <th>
-                Photo
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nom)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Prenom)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telephone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ecole)
-            </th>
-           
-            <th>
-                CV
-            </th>
+            <th>Photo</th>
+            <th>@Html.DisplayNameFor(model => model.Nom)</th>
+            <th>@Html.DisplayNameFor(model => model.Prenom)</th>
+            <th>@Html.DisplayNameFor(model => model.Cin)</th>
+            <th>@Html.DisplayNameFor(model => model.Telephone)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.Ecole)</th>
+            <th>CV</th>
             <th></th>
         </tr>
     </thead>
@@ -51,32 +42,19 @@
                 <td>
                     @if (!string.IsNullOrEmpty(item.Path_Photo))
                     {
-                        <img src="~/uploads/photos/@item.Path_Photo" alt="Photo de @item.Nom" style="max-width: 50; max-height: 50px;" />
+                        <img src="~/uploads/photos/@item.Path_Photo" alt="Photo de @item.Nom" style="max-width: 50px; max-height: 50px;" />
                     }
                     else
                     {
                         <p>Aucune photo disponible</p>
                     }
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nom)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Prenom)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cin)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Telephone)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ecole)
-                </td>
-                
+                <td>@Html.DisplayFor(modelItem => item.Nom)</td>
+                <td>@Html.DisplayFor(modelItem => item.Prenom)</td>
+                <td>@Html.DisplayFor(modelItem => item.Cin)</td>
+                <td>@Html.DisplayFor(modelItem => item.Telephone)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.Ecole)</td>
                 <td>
                     @if (!string.IsNullOrEmpty(item.Path_CV))
                     {
@@ -96,3 +74,26 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        function filterResults() {
+            var input = document.getElementById('searchInput');
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById('stagiairesTable');
+            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var match = false;
+                for (var j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = match ? '' : 'none';
+            }
+        }
+    </script>
+}

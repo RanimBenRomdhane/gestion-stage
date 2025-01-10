@@ -22,9 +22,24 @@ namespace Gestion_Stagiaire.Controllers
         }
 
         // GET: Stagiaires
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Stagiaires.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var stagiaires = from s in _context.Stagiaires
+                             select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                stagiaires = stagiaires.Where(s => s.Nom.Contains(searchString)
+                                       || s.Prenom.Contains(searchString)
+                                       || s.Cin.Contains(searchString)
+                                       || s.Telephone.ToString().Contains(searchString)
+                                       || s.Ecole.ToString().Contains(searchString));
+
+            }
+
+            return View(await stagiaires.ToListAsync());
         }
 
         // GET: Stagiaires/Details/5
@@ -61,45 +76,15 @@ namespace Gestion_Stagiaire.Controllers
                 stagiaire.Id = Guid.NewGuid();
 
                 // Handle Photo upload
-                if (Path_Photo != null && Path_Photo.Length > 0)
+                if (!await HandleFileUpload(Path_Photo, stagiaire, "photos", "Path_Photo", ".png"))
                 {
-                    var photoExtension = Path.GetExtension(Path_Photo.FileName);
-                    if (photoExtension.ToLower() != ".png")
-                    {
-                        ModelState.AddModelError("Path_Photo", "The photo must be a .png file.");
-                        return View(stagiaire);
-                    }
-
-                    var photoFileName = $"{stagiaire.Cin}.png";
-                    var photoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/photos", photoFileName);
-
-                    using (var stream = new FileStream(photoPath, FileMode.Create))
-                    {
-                        await Path_Photo.CopyToAsync(stream);
-                    }
-
-                    stagiaire.Path_Photo = photoFileName;
+                    return View(stagiaire);
                 }
 
                 // Handle CV upload
-                if (Path_CV != null && Path_CV.Length > 0)
+                if (!await HandleFileUpload(Path_CV, stagiaire, "cvs", "Path_CV", ".pdf"))
                 {
-                    var cvExtension = Path.GetExtension(Path_CV.FileName);
-                    if (cvExtension.ToLower() != ".pdf")
-                    {
-                        ModelState.AddModelError("Path_CV", "The CV must be a .pdf file.");
-                        return View(stagiaire);
-                    }
-
-                    var cvFileName = $"{stagiaire.Cin}.pdf";
-                    var cvPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/cvs", cvFileName);
-
-                    using (var stream = new FileStream(cvPath, FileMode.Create))
-                    {
-                        await Path_CV.CopyToAsync(stream);
-                    }
-
-                    stagiaire.Path_CV = cvFileName;
+                    return View(stagiaire);
                 }
 
                 _context.Add(stagiaire);
@@ -140,45 +125,15 @@ namespace Gestion_Stagiaire.Controllers
                 try
                 {
                     // Handle Photo upload
-                    if (Path_Photo != null && Path_Photo.Length > 0)
+                    if (!await HandleFileUpload(Path_Photo, stagiaire, "photos", "Path_Photo", ".png"))
                     {
-                        var photoExtension = Path.GetExtension(Path_Photo.FileName);
-                        if (photoExtension.ToLower() != ".png")
-                        {
-                            ModelState.AddModelError("Path_Photo", "The photo must be a .png file.");
-                            return View(stagiaire);
-                        }
-
-                        var photoFileName = $"{stagiaire.Cin}.png";
-                        var photoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/photos", photoFileName);
-
-                        using (var stream = new FileStream(photoPath, FileMode.Create))
-                        {
-                            await Path_Photo.CopyToAsync(stream);
-                        }
-
-                        stagiaire.Path_Photo = photoFileName;
+                        return View(stagiaire);
                     }
 
                     // Handle CV upload
-                    if (Path_CV != null && Path_CV.Length > 0)
+                    if (!await HandleFileUpload(Path_CV, stagiaire, "cvs", "Path_CV", ".pdf"))
                     {
-                        var cvExtension = Path.GetExtension(Path_CV.FileName);
-                        if (cvExtension.ToLower() != ".pdf")
-                        {
-                            ModelState.AddModelError("Path_CV", "The CV must be a .pdf file.");
-                            return View(stagiaire);
-                        }
-
-                        var cvFileName = $"{stagiaire.Cin}.pdf";
-                        var cvPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/cvs", cvFileName);
-
-                        using (var stream = new FileStream(cvPath, FileMode.Create))
-                        {
-                            await Path_CV.CopyToAsync(stream);
-                        }
-
-                        stagiaire.Path_CV = cvFileName;
+                        return View(stagiaire);
                     }
 
                     _context.Update(stagiaire);
@@ -278,6 +233,38 @@ namespace Gestion_Stagiaire.Controllers
         private bool StagiaireExists(Guid id)
         {
             return _context.Stagiaires.Any(e => e.Id == id);
+        }
+
+        private async Task<bool> HandleFileUpload(IFormFile file, Stagiaire stagiaire, string folder, string propertyName, string requiredExtension)
+        {
+            if (file != null && file.Length > 0)
+            {
+                var extension = Path.GetExtension(file.FileName);
+                if (extension.ToLower() != requiredExtension)
+                {
+                    ModelState.AddModelError(propertyName, $"The file must be a {requiredExtension} file.");
+                    return false;
+                }
+
+                var fileName = $"{stagiaire.Cin}{requiredExtension}";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{folder}", fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                if (propertyName == "Path_Photo")
+                {
+                    stagiaire.Path_Photo = fileName;
+                }
+                else if (propertyName == "Path_CV")
+                {
+                    stagiaire.Path_CV = fileName;
+                }
+            }
+
+            return true;
         }
     }
 }

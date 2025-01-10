@@ -14,6 +14,7 @@ namespace Gestion_Stagiaire.Data
         public DbSet<Stagiaire> Stagiaires { get; set; }
         public DbSet<DemandeStage> DemandesStage { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
