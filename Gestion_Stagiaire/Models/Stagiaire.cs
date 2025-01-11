@@ -1,11 +1,12 @@
-﻿using Gestion_Stagiaire.Models;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Gestion_Stagiaire.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Gestion_Stagiaires.Models
 {
-    public class Stagiaire
+    public class Stagiaire 
     {
-        public Guid Id { get; set; }
+       public Guid Id { get; set; }
         public String Nom { get; set; }
         public String Prenom { get; set; }
         [Range(10000000, 99999999, ErrorMessage = "Le numero de CIN doit comporter 8 chiffres.")]

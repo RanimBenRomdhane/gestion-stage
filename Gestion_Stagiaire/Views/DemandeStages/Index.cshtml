@@ -43,10 +43,10 @@
                 <td>
                     @item.Stagiaire.Nom @item.Stagiaire.Prenom
                 </td>
-                <td>@Html.DisplayFor(modelItem => item.Type_Stage)</td>
+                <td>@Html.DisplayFor(modelItem => item.Type_Stage.Stage_Type)</td>
                 <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
                 <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
-                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status.Reponse)</td>
                 <td>
                     @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
                     {

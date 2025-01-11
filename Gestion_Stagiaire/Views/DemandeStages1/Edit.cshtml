@@ -1,0 +1,79 @@
+﻿@model Gestion_Stagiaire.Models.DemandeStage
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>DemandeStage</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="StagiaireId" class="control-label"></label>
+                <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.StagiaireId"></select>
+                <span asp-validation-for="StagiaireId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type_StageId" class="control-label"></label>
+                <select asp-for="Type_StageId" class="form-control" asp-items="ViewBag.Type_StageId"></select>
+                <span asp-validation-for="Type_StageId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StatusId" class="control-label"></label>
+                <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                <span asp-validation-for="StatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date_Debut" class="control-label"></label>
+                <input asp-for="Date_Debut" class="form-control" />
+                <span asp-validation-for="Date_Debut" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date_Fin" class="control-label"></label>
+                <input asp-for="Date_Fin" class="form-control" />
+                <span asp-validation-for="Date_Fin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Path_Demande_Stage" class="control-label"></label>
+                <input asp-for="Path_Demande_Stage" class="form-control" />
+                <span asp-validation-for="Path_Demande_Stage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date_Demande" class="control-label"></label>
+                <input asp-for="Date_Demande" class="form-control" />
+                <span asp-validation-for="Date_Demande" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AffectationId" class="control-label"></label>
+                <input asp-for="AffectationId" class="form-control" />
+                <span asp-validation-for="AffectationId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Path_Rapport" class="control-label"></label>
+                <input asp-for="Path_Rapport" class="form-control" />
+                <span asp-validation-for="Path_Rapport" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Commentaire" class="control-label"></label>
+                <input asp-for="Commentaire" class="form-control" />
+                <span asp-validation-for="Commentaire" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
