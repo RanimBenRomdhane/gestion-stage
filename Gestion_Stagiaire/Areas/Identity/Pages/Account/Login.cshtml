@@ -1,0 +1,84 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Se connecter";
+}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(to right, #f8e8e8, #e8f5f8);">
+    <div class="col-md-5">
+        <section class="p-5 rounded" style="background-color: #ffffff; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); animation: fadeIn 1.5s;">
+            <h1 class="text-center" style="color: #6a82fb;">@ViewData["Title"]</h1>
+            <form id="account" method="post">
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                <!-- Email Input -->
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control border-0 shadow-sm" autocomplete="username" aria-required="true" placeholder="name@example.com" style="background-color: #f9f9f9;" />
+                    <label asp-for="Input.Email" style="color: #3a3a3a;">Adresse e-mail</label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <!-- Password Input -->
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Password" type="password" class="form-control border-0 shadow-sm" autocomplete="current-password" aria-required="true" placeholder="Mot de passe" style="background-color: #f9f9f9;" />
+                    <label asp-for="Input.Password" style="color: #3a3a3a;">Mot de passe</label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheckbox" />
+                    <label class="form-check-label" for="rememberMeCheckbox" style="color: #3a3a3a;">
+                        Se souvenir de moi
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg" style="background-color: #6a82fb; color: #fff; border-radius: 50px; transition: transform 0.3s;" 
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        Se connecter
+                    </button>
+                </div>
+
+                <!-- Additional Links -->
+                <div class="text-center mt-4">
+                    <p>
+                        <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none" style="color: #fc5185;">Mot de passe oublié ?</a>
+                    </p>
+                    <p>
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none" style="color: #6a82fb;">Créer un nouveau compte</a>
+                    </p>
+                   
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    /* Animation for the form */
+   
+
+    /* Form input hover effect */
+    .form-control:hover {
+        background-color: #f0f4f8;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Smooth scrolling for links */
+    a {
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #ff7b7b !important;
+    }
+</style>
