@@ -1,0 +1,95 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Créer un compte";
+}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100" 
+     style="background: linear-gradient(to right, #f8e8e8, #e8f5f8);  overflow: hidden;">
+    <div class="col-md-5">
+        <section class="p-5 rounded" 
+                 style="background-color: #ffffff; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); animation: fadeIn 1.5s;">
+            <h1 class="text-center" style="color: #6a82fb;">@ViewData["Title"]</h1>
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                <!-- Email Input -->
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control border-0 shadow-sm" 
+                           autocomplete="username" aria-required="true" placeholder="name@example.com" style="background-color: #f9f9f9;" />
+                    <label asp-for="Input.Email" style="color: #3a3a3a;">Adresse e-mail</label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <!-- Password Input -->
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Password" type="password" class="form-control border-0 shadow-sm" 
+                           autocomplete="new-password" aria-required="true" placeholder="Mot de passe" style="background-color: #f9f9f9;" />
+                    <label asp-for="Input.Password" style="color: #3a3a3a;">Mot de passe</label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.ConfirmPassword" type="password" class="form-control border-0 shadow-sm" 
+                           autocomplete="new-password" aria-required="true" placeholder="Confirmez le mot de passe" style="background-color: #f9f9f9;" />
+                    <label asp-for="Input.ConfirmPassword" style="color: #3a3a3a;">Confirmez le mot de passe</label>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button id="registerSubmit" type="submit" class="w-100 btn btn-lg" 
+                            style="background-color: #6a82fb; color: #fff; border-radius: 50px; transition: transform 0.3s;" 
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        Créer un compte
+                    </button>
+                </div>
+
+                <!-- Additional Links -->
+                <div class="text-center mt-4">
+                    <p>
+                        Vous avez déjà un compte ?
+                        <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none" style="color: #6a82fb;">
+                            Connectez-vous
+                        </a>
+                    </p>
+                </div>
+
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    /* Animation for the form */
+
+
+    /* Form input hover effect */
+    .form-control:hover {
+        background-color: #f0f4f8;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Smooth scrolling for links */
+    a {
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #ff7b7b !important;
+    }
+
+    /* Remove margin and padding from body */
+    body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+</style>
