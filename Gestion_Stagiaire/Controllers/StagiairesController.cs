@@ -9,9 +9,11 @@ using OfficeOpenXml;
 using Gestion_Stagiaire.Data;
 using Gestion_Stagiaire.Models;
 using Gestion_Stagiaires.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gestion_Stagiaire.Controllers
 {
+    [Authorize]
     public class StagiairesController : Controller
     {
         private readonly ApplicationDbContext _context;

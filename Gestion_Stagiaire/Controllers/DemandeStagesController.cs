@@ -9,16 +9,22 @@ using Gestion_Stagiaire.Data;
 using Gestion_Stagiaire.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gestion_Stagiaire.Controllers
 {
+    [Authorize]
     public class DemandeStagesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private UserManager<IdentityUser> userManager;
 
         public DemandeStagesController(ApplicationDbContext context)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: DemandeStages
@@ -30,7 +36,7 @@ namespace Gestion_Stagiaire.Controllers
                                 .Include(d => d.Stagiaire)
                                 .Include(d => d.Type_Stage)
                                 .Include(d => d.Status)
-                                .Include(d => d.Affectation)
+                                .Include(d => d.Departement)
                                 select d;
 
             if (!String.IsNullOrEmpty(searchString))
@@ -39,7 +45,8 @@ namespace Gestion_Stagiaire.Controllers
                     d.Stagiaire.Nom.Contains(searchString)
                     || d.Stagiaire.Prenom.Contains(searchString)
                     || d.Type_Stage.Stage_Type.Contains(searchString)
-                    || d.Status.Reponse.Contains(searchString));
+                    || d.Status.Reponse.Contains(searchString)
+                    || d.Departement.Nom_Departement.Contains(searchString));
             }
 
             return View(await demandesStage.ToListAsync());
@@ -52,7 +59,7 @@ namespace Gestion_Stagiaire.Controllers
                 .Include(d => d.Stagiaire)
                 .Include(d => d.Type_Stage)
                 .Include(d => d.Status)
-                .Include(d => d.Affectation)
+                .Include(d => d.Departement)
                 .ToListAsync();
 
             // Configure EPPlus to use the non-commercial license
@@ -70,8 +77,9 @@ namespace Gestion_Stagiaire.Controllers
             worksheet.Cells[1, 7].Value = "Date Demande";
             worksheet.Cells[1, 8].Value = "Departement";
             worksheet.Cells[1, 9].Value = "Encadrant";
-            worksheet.Cells[1, 10].Value = "Commentaire";
+            worksheet.Cells[1, 10].Value = "Titre Projet";
             worksheet.Cells[1, 11].Value = "Rapport PFE";
+            worksheet.Cells[1, 12].Value = "Commentaire";
 
             // Add values
             for (int i = 0; i < demandeStages.Count; i++)
@@ -84,10 +92,11 @@ namespace Gestion_Stagiaire.Controllers
                 worksheet.Cells[row, 5].Value = demandeStages[i].Status?.Reponse;
                 worksheet.Cells[row, 6].Value = demandeStages[i].Path_Demande_Stage;
                 worksheet.Cells[row, 7].Value = demandeStages[i].Date_Demande.ToString("yyyy-MM-dd");
-                worksheet.Cells[row, 8].Value = demandeStages[i].Affectation?.Departement;
-                worksheet.Cells[row, 9].Value = demandeStages[i].Affectation?.Encadrant;
-                worksheet.Cells[row, 10].Value = demandeStages[i].Commentaire;
+                worksheet.Cells[row, 8].Value = demandeStages[i].Departement?.Nom_Departement;
+                worksheet.Cells[row, 9].Value = demandeStages[i].Encadrant;
+                worksheet.Cells[row, 10].Value = demandeStages[i].Titre_Projet;
                 worksheet.Cells[row, 11].Value = demandeStages[i].Path_Rapport;
+                worksheet.Cells[row, 12].Value = demandeStages[i].Commentaire;
             }
 
             var stream = new MemoryStream(package.GetAsByteArray());
@@ -111,7 +120,7 @@ namespace Gestion_Stagiaire.Controllers
                 .Include(d => d.Stagiaire)
                 .Include(d => d.Type_Stage)
                 .Include(d => d.Status)
-                .Include(d => d.Affectation)
+                .Include(d => d.Departement)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (demandeStage == null)
             {
@@ -139,11 +148,90 @@ namespace Gestion_Stagiaire.Controllers
 
             ViewData["Type_StageId"] = new SelectList(_context.TypesStage, "Id", "Stage_Type");
             ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Reponse");
-            ViewData["AffectationId"] = new SelectList(_context.Affectations, "Id", "Encadrant");
+            ViewData["DepartementId"] = new SelectList(_context.Departements, "Id", "Nom_Departement");
 
             return View(demandeStage);
         }
 
+        // POST: DemandeStages/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(DemandeStage demandeStage, IFormFile? Path_Demande_Stage, IFormFile? Path_Rapport)
+        {
+            if (ModelState.IsValid)
+            {    // Get the current user
+                var currentUser = await _userManager.GetUserAsync(User);
+                
+                // Handle Demande Stage File upload
+                if (Path_Demande_Stage != null && Path_Demande_Stage.Length > 0)
+                {
+                    var fileExtension = Path.GetExtension(Path_Demande_Stage.FileName).ToLower();
+                    if (fileExtension != ".pdf")
+                    {
+                        ModelState.AddModelError("Path_Demande_Stage", "Le fichier de demande de stage doit être un fichier .pdf.");
+                        PopulateDropDownLists(demandeStage);
+                        return View(demandeStage);
+                    }
+
+                    var uploadsFolder = Path.Combine("wwwroot/uploads/demandes");
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    var filePath = Path.Combine(uploadsFolder, $"{demandeStage.StagiaireId}.pdf");
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Path_Demande_Stage.CopyToAsync(stream);
+                    }
+
+                    demandeStage.Path_Demande_Stage = $"{demandeStage.StagiaireId}.pdf";
+                }
+
+                // Handle Rapport PFE File upload
+                if (Path_Rapport != null && Path_Rapport.Length > 0)
+                {
+                    var fileExtension = Path.GetExtension(Path_Rapport.FileName).ToLower();
+                    if (fileExtension != ".pdf")
+                    {
+                        ModelState.AddModelError("Path_Rapport", "Le fichier du rapport PFE doit être un fichier .pdf.");
+                        PopulateDropDownLists(demandeStage);
+                        return View(demandeStage);
+                    }
+
+                    var uploadsFolder = Path.Combine("wwwroot/uploads/rapports");
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    var filePath = Path.Combine(uploadsFolder, $"{demandeStage.StagiaireId}_rapport.pdf");
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Path_Rapport.CopyToAsync(stream);
+                    }
+
+                    demandeStage.Path_Rapport = $"{demandeStage.StagiaireId}_rapport.pdf";
+                }
+
+                // Si le statut est null, lui attribuer "En cours" par défaut
+                if (demandeStage.StatusId == null)
+                {
+                    var statutEnCours = await _context.Statuses.FirstOrDefaultAsync(s => s.Reponse == "En cours");
+                    if (statutEnCours != null)
+                    {
+                        demandeStage.StatusId = statutEnCours.Id;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Le statut 'En cours' n'existe pas dans la base de données. Veuillez le créer.");
+                        PopulateDropDownLists(demandeStage);
+                        return View(demandeStage);
+                    }
+                }
+
+                _context.Add(demandeStage);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            PopulateDropDownLists(demandeStage);
+            return View(demandeStage);
+        }
 
 
         // GET: DemandeStages/Edit/5
@@ -166,7 +254,7 @@ namespace Gestion_Stagiaire.Controllers
         // POST: DemandeStages/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,StagiaireId,Type_StageId,Date_Debut,Date_Fin,StatusId,Date_Demande,AffectationId,Commentaire")] DemandeStage demandeStage, IFormFile? Path_Demande_Stage, IFormFile? Path_Rapport_PFE)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,StagiaireId,Type_StageId,Date_Debut,Date_Fin,StatusId,Date_Demande,Encadrant,DepartementId,Commentaire,Titre_Projet")] DemandeStage demandeStage, IFormFile? Path_Demande_Stage, IFormFile? Path_Rapport)
         {
             if (id != demandeStage.Id)
             {
@@ -181,24 +269,7 @@ namespace Gestion_Stagiaire.Controllers
                     var typeStageExists = await _context.TypesStage.AnyAsync(ts => ts.Id == demandeStage.Type_StageId);
                     if (!typeStageExists)
                     {
-                        ModelState.AddModelError("Type_StageId", "The selected type of stage does not exist.");
-                        PopulateDropDownLists(demandeStage);
-                        return View(demandeStage);
-                    }
-
-                    // Fetch Stagiaire
-                    var stagiaire = await _context.Stagiaires.FindAsync(demandeStage.StagiaireId);
-                    if (stagiaire == null)
-                    {
-                        ModelState.AddModelError("StagiaireId", "Invalid Stagiaire ID.");
-                        PopulateDropDownLists(demandeStage);
-                        return View(demandeStage);
-                    }
-
-                    // Ensure stagiaire.Cin is not null or empty
-                    if (string.IsNullOrWhiteSpace(stagiaire.Cin))
-                    {
-                        ModelState.AddModelError("", "The CIN for the Stagiaire is not set. Unable to save files.");
+                        ModelState.AddModelError("Type_StageId", "Le type de stage sélectionné n'existe pas.");
                         PopulateDropDownLists(demandeStage);
                         return View(demandeStage);
                     }
@@ -209,7 +280,7 @@ namespace Gestion_Stagiaire.Controllers
                         var fileExtension = Path.GetExtension(Path_Demande_Stage.FileName).ToLower();
                         if (fileExtension != ".pdf")
                         {
-                            ModelState.AddModelError("Path_Demande_Stage", "The demande stage file must be a .pdf file.");
+                            ModelState.AddModelError("Path_Demande_Stage", "Le fichier de demande de stage doit être un fichier .pdf.");
                             PopulateDropDownLists(demandeStage);
                             return View(demandeStage);
                         }
@@ -217,22 +288,22 @@ namespace Gestion_Stagiaire.Controllers
                         var uploadsFolder = Path.Combine("wwwroot/uploads/demandes");
                         Directory.CreateDirectory(uploadsFolder);
 
-                        var filePath = Path.Combine(uploadsFolder, $"{stagiaire.Cin}.pdf");
+                        var filePath = Path.Combine(uploadsFolder, $"{demandeStage.StagiaireId}.pdf");
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await Path_Demande_Stage.CopyToAsync(stream);
                         }
 
-                        demandeStage.Path_Demande_Stage = $"{stagiaire.Cin}.pdf";
+                        demandeStage.Path_Demande_Stage = $"{demandeStage.StagiaireId}.pdf";
                     }
 
                     // Handle Rapport PFE File upload
-                    if (Path_Rapport_PFE != null && Path_Rapport_PFE.Length > 0)
+                    if (Path_Rapport != null && Path_Rapport.Length > 0)
                     {
-                        var fileExtension = Path.GetExtension(Path_Rapport_PFE.FileName).ToLower();
+                        var fileExtension = Path.GetExtension(Path_Rapport.FileName).ToLower();
                         if (fileExtension != ".pdf")
                         {
-                            ModelState.AddModelError("Path_Rapport_PFE", "The rapport PFE file must be a .pdf file.");
+                            ModelState.AddModelError("Path_Rapport", "Le fichier du rapport PFE doit être un fichier .pdf.");
                             PopulateDropDownLists(demandeStage);
                             return View(demandeStage);
                         }
@@ -240,22 +311,15 @@ namespace Gestion_Stagiaire.Controllers
                         var uploadsFolder = Path.Combine("wwwroot/uploads/rapports");
                         Directory.CreateDirectory(uploadsFolder);
 
-                        var filePath = Path.Combine(uploadsFolder, $"{stagiaire.Cin}.pdf");
+                        var filePath = Path.Combine(uploadsFolder, $"{demandeStage.StagiaireId}_rapport.pdf");
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
-                            await Path_Rapport_PFE.CopyToAsync(stream);
+                            await Path_Rapport.CopyToAsync(stream);
                         }
 
-                        demandeStage.Path_Rapport = $"{stagiaire.Cin}.pdf";
+                        demandeStage.Path_Rapport = $"{demandeStage.StagiaireId}_rapport.pdf";
                     }
 
-                    // Update Date_Demande if necessary
-                    if (demandeStage.Date_Demande == default)
-                    {
-                        demandeStage.Date_Demande = DateTime.Now;
-                    }
-
-                    // Update the database record
                     _context.Update(demandeStage);
                     await _context.SaveChangesAsync();
                 }
@@ -272,13 +336,23 @@ namespace Gestion_Stagiaire.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-
             PopulateDropDownLists(demandeStage);
             return View(demandeStage);
         }
 
+        // Helper Method
+        private bool DemandeStageExists(Guid id)
+        {
+            return _context.DemandesStage.Any(e => e.Id == id);
+        }
 
-
+        private void PopulateDropDownLists(DemandeStage demandeStage = null)
+        {
+            ViewData["StagiaireId"] = new SelectList(_context.Stagiaires.Select(s => new { s.Id, FullName = s.Nom + " " + s.Prenom }), "Id", "FullName", demandeStage?.StagiaireId);
+            ViewData["Type_StageId"] = new SelectList(_context.TypesStage, "Id", "Stage_Type", demandeStage?.Type_StageId);
+            ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Reponse", demandeStage?.StatusId);
+            ViewData["DepartementId"] = new SelectList(_context.Departements, "Id", "Nom_Departement", demandeStage?.DepartementId);
+        }
         // GET: DemandeStages/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
@@ -291,8 +365,9 @@ namespace Gestion_Stagiaire.Controllers
                 .Include(d => d.Stagiaire)
                 .Include(d => d.Type_Stage)
                 .Include(d => d.Status)
-                .Include(d => d.Affectation)
+                .Include(d => d.Departement)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (demandeStage == null)
             {
                 return NotFound();
@@ -309,28 +384,31 @@ namespace Gestion_Stagiaire.Controllers
             var demandeStage = await _context.DemandesStage.FindAsync(id);
             if (demandeStage != null)
             {
+                // Delete associated files if they exist
+                if (!string.IsNullOrEmpty(demandeStage.Path_Demande_Stage))
+                {
+                    var demandeFilePath = Path.Combine("wwwroot/uploads/demandes", demandeStage.Path_Demande_Stage);
+                    if (System.IO.File.Exists(demandeFilePath))
+                    {
+                        System.IO.File.Delete(demandeFilePath);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(demandeStage.Path_Rapport))
+                {
+                    var rapportFilePath = Path.Combine("wwwroot/uploads/rapports", demandeStage.Path_Rapport);
+                    if (System.IO.File.Exists(rapportFilePath))
+                    {
+                        System.IO.File.Delete(rapportFilePath);
+                    }
+                }
+
                 _context.DemandesStage.Remove(demandeStage);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DemandeStageExists(Guid id)
-        {
-            return _context.DemandesStage.Any(e => e.Id == id);
-        }
-
-        private void PopulateDropDownLists(DemandeStage demandeStage)
-        {
-            ViewData["StagiaireId"] = new SelectList(_context.Stagiaires.Select(s => new
-            {
-                Id = s.Id,
-                FullName = s.Nom + " " + s.Prenom
-            }), "Id", "FullName", demandeStage.StagiaireId);
-            ViewData["Type_StageId"] = new SelectList(_context.TypesStage, "Id", "Stage_Type", demandeStage.Type_StageId);
-            ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Reponse", demandeStage.StatusId);
-            ViewData["AffectationId"] = new SelectList(_context.Affectations, "Id", "Encadrant", demandeStage.AffectationId);
-        }
     }
 }

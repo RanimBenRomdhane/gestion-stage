@@ -20,3 +20,72 @@ html {
 body {
   margin-bottom: 60px;
 }
+/* Global page styling */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8; /* Fond très clair */
+}
+
+/* Animation for the form */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Validation error text */
+.text-danger {
+    color: #e74c3c;
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: #2c3e50 !important; /* Bleu nuit */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .navbar .navbar-brand, .navbar .nav-link {
+        color: #fff !important;
+    }
+
+        .navbar .nav-link:hover {
+            color: #ecf0f1 !important;
+        }
+
+/* Additional Styling for Footer */
+footer {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 15px 0;
+    text-align: center;
+}
+
+    footer a {
+        color: #3498db;
+    }
+
+        footer a:hover {
+            color: #ecf0f1;
+            text-decoration: underline;
+        }
+/* Logo dans la navbar */
+.navbar-logo {
+    width: 150px; /* Largeur du logo */
+    height: 60px; /* Maintient la proportion de l'image */
+    margin-right: 10px; /* Espacement entre le logo et le texte */
+    margin-top: -10px; /* Ajustement de la position du logo */
+}

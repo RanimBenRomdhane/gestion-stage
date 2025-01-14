@@ -4,6 +4,7 @@ using Gestion_Stagiaire.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestion_Stagiaire.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250113095130_007")]
+    partial class _007
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,6 +47,7 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Encadrant")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Path_Demande_Stage")
@@ -57,9 +61,6 @@ namespace Gestion_Stagiaire.Data.Migrations
 
                     b.Property<Guid?>("StatusId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Titre_Projet")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("Type_StageId")
                         .HasColumnType("uniqueidentifier");

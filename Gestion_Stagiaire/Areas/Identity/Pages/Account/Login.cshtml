@@ -5,80 +5,196 @@
     ViewData["Title"] = "Se connecter";
 }
 
-<div class="d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(to right, #f8e8e8, #e8f5f8);">
-    <div class="col-md-5">
-        <section class="p-5 rounded" style="background-color: #ffffff; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); animation: fadeIn 1.5s;">
-            <h1 class="text-center" style="color: #6a82fb;">@ViewData["Title"]</h1>
-            <form id="account" method="post">
-                
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <div class="d-flex flex-column min-vh-100 bg-light">
+        <div class="d-flex justify-content-center align-items-center flex-grow-1">
+            <div class="col-md-4 col-lg-3">
+                <section class="p-5 rounded form-container">
+                    <h1 class="text-center title-text">@ViewData["Title"]</h1>
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-                <!-- Email Input -->
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control border-0 shadow-sm" autocomplete="username" aria-required="true" placeholder="name@example.com" style="background-color: #f9f9f9;" />
-                    <label asp-for="Input.Email" style="color: #3a3a3a;">Adresse e-mail</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
+                        <!-- Email Input -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control custom-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email" class="font-weight-bold">Adresse e-mail</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
 
-                <!-- Password Input -->
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" type="password" class="form-control border-0 shadow-sm" autocomplete="current-password" aria-required="true" placeholder="Mot de passe" style="background-color: #f9f9f9;" />
-                    <label asp-for="Input.Password" style="color: #3a3a3a;">Mot de passe</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
+                        <!-- Password Input -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" type="password" class="form-control custom-input" autocomplete="current-password" aria-required="true" placeholder="Mot de passe" />
+                            <label asp-for="Input.Password" class="font-weight-bold">Mot de passe</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
 
-                <!-- Remember Me Checkbox -->
-                <div class="form-check mb-3">
-                    <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheckbox" />
-                    <label class="form-check-label" for="rememberMeCheckbox" style="color: #3a3a3a;">
-                        Se souvenir de moi
-                    </label>
-                </div>
+                        <!-- Remember Me Checkbox -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheckbox" />
+                            <label class="form-check-label font-weight-bold" for="rememberMeCheckbox">
+                                Se souvenir de moi
+                            </label>
+                        </div>
 
-                <!-- Submit Button -->
-                <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg" style="background-color: #6a82fb; color: #fff; border-radius: 50px; transition: transform 0.3s;" 
-                            onmouseover="this.style.transform='scale(1.05)'" 
-                            onmouseout="this.style.transform='scale(1)'">
-                        Se connecter
-                    </button>
-                </div>
+                        <!-- Submit Button -->
+                        <div>
+                            <button id="login-submit" type="submit" class="w-100 btn btn-lg custom-btn">
+                                Se connecter
+                            </button>
+                        </div>
 
-                <!-- Additional Links -->
-                <div class="text-center mt-4">
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none" style="color: #fc5185;">Mot de passe oublié ?</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none" style="color: #6a82fb;">Créer un nouveau compte</a>
-                    </p>
-                   
-                </div>
-            </form>
-        </section>
+                        <!-- Additional Links -->
+                        <div class="text-center mt-4">
+                            <p>
+                                <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">Mot de passe oublié ?</a>
+                            </p>
+                            <p>
+                                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Créer un nouveau compte</a>
+                            </p>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>© 2025 WikMeek. Tous droits réservés.</p>
+            <a href="https://www.wikmeek.com" target="_blank">Visitez notre site</a>
+        </footer>
     </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
-
-<style>
-    /* Animation for the form */
-   
-
-    /* Form input hover effect */
-    .form-control:hover {
-        background-color: #f0f4f8;
-        transition: background-color 0.3s ease;
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
     }
 
-    /* Smooth scrolling for links */
-    a {
-        transition: color 0.3s ease;
-    }
+    <!-- CSS à la fin du fichier -->
+    <style>
+        /* Global page styling */
+        html {
+            font-size: 14px;
+        }
 
-    a:hover {
-        color: #ff7b7b !important;
-    }
-</style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8; /* Fond très clair */
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .flex-column {
+            flex-direction: column;
+        }
+
+        .min-vh-100 {
+            min-height: 100vh;
+        }
+
+        .flex-grow-1 {
+            flex-grow: 1;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa;
+        }
+
+        /* Form container styling */
+        .form-container {
+            background-color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.5s ease-in-out;
+            border-radius: 15px;
+            padding: 30px;
+            transition: transform 0.5s ease;
+            margin-top: -50px; /* Formulaire un peu plus haut */
+        }
+
+        .form-container:hover {
+            transform: translateY(-10px);
+        }
+
+       
+
+        /* Title styling */
+        .title-text {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 2rem; /* Taille de police plus petite mais claire */
+            text-align: center;
+        }
+
+        /* Input styles */
+        .custom-input {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            padding: 15px;
+            border-radius: 10px;
+            color: #333; /* Couleur texte plus sombre pour plus de contraste */
+        }
+
+        .custom-input:hover {
+            background-color: #f5f5f5;
+            border: 1px solid #3498db;
+        }
+
+        /* Button styles */
+        .custom-btn {
+            background-color: indianred;
+            color: #fff;
+            border-radius: 50px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            font-weight: bold;
+            padding: 12px 0;
+        }
+
+        .custom-btn:hover {
+            transform: scale(1.1);
+            background-color: #c0392b;
+        }
+
+        /* Links */
+        a {
+            color: darkgray;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #e74c3c;
+        }
+
+        /* Validation error text */
+        .text-danger {
+            color: #e74c3c;
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: #3498db;
+        }
+
+        footer a:hover {
+            color: #ecf0f1;
+            text-decoration: underline;
+        }
+    </style>
+</body>
+</html>

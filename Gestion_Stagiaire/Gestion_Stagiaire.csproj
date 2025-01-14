@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\uploads\cvs\" />
     <Folder Include="wwwroot\uploads\demandes\" />
     <Folder Include="wwwroot\uploads\rapports\" />

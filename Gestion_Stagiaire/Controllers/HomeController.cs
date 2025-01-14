@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace Gestion_Stagiaire.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,7 +14,7 @@ namespace Gestion_Stagiaire.Controllers
         {
             _logger = logger;
         }
-        [Authorize]
+        
         public IActionResult Index()
         {
             return View();

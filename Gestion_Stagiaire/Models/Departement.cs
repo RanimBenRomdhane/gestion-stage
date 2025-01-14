@@ -4,6 +4,6 @@
     {
         public Guid Id { get; set; }
         public String Nom_Departement { get; set; }
-        public List<Affectation> Affectations { get; set; } = new List<Affectation>();
+        public List<DemandeStage>? DemandesStage { get; set; } = new List<DemandeStage>();
     }
 }
