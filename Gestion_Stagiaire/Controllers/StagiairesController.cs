@@ -10,6 +10,7 @@ using Gestion_Stagiaire.Data;
 using Gestion_Stagiaire.Models;
 using Gestion_Stagiaires.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Gestion_Stagiaire.Controllers
 {
@@ -35,7 +36,7 @@ namespace Gestion_Stagiaire.Controllers
             {
                 stagiaires = stagiaires.Where(s => s.Nom.Contains(searchString)
                                        || s.Prenom.Contains(searchString)
-                                       || s.Cin.Contains(searchString)
+                                       || s.Cin.ToString().Contains(searchString)
                                        || s.Telephone.ToString().Contains(searchString)
                                        || s.Ecole.ToString().Contains(searchString));
 
@@ -68,14 +69,69 @@ namespace Gestion_Stagiaire.Controllers
             return View();
         }
 
-        // POST: Stagiaires/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nom,Prenom,Cin,Telephone,Email,Ecole")] Stagiaire stagiaire, IFormFile Path_Photo, IFormFile Path_CV)
+        public async Task<IActionResult> Create([Bind("Nom,Prenom,Cin,Telephone,Email, Ecole")] Stagiaire stagiaire, IFormFile Path_Photo, IFormFile Path_CV)
         {
             if (ModelState.IsValid)
             {
-                stagiaire.Id = Guid.NewGuid();
+                // Ensure the user is authenticated
+                if (User.Identity?.IsAuthenticated == true)
+                {
+                    foreach (var claim in User.Claims)
+                    {
+                        Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                    }
+                    // Retrieve user information
+                    string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var userEmail = User.Identity?.Name;
+
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        Console.WriteLine($"Authenticated User ID: {userId}");
+
+                        // Only check for existing stagiaire email if the user is a "stagiaire" (not "rh")
+                        if (User.IsInRole("Stagiaire"))
+                        {
+                            // Check if a Stagiaire with the same email already exists
+                            var existingStagiaire = await _context.Stagiaires
+                                .FirstOrDefaultAsync(s => s.Email == userEmail);
+                            //  stagiaire.Email = userEmail;
+
+
+                            if (existingStagiaire != null)
+                            {
+                                // If an account already exists for "stagiaire", set an error message in ViewData for the popup
+                                ModelState.AddModelError(string.Empty, "You have already created an account.");
+                                return View(stagiaire);
+                            }
+                            else
+                            {
+                                // Assign the user's ID (stagiaire)
+                                stagiaire.Id = Guid.Parse(userId); // User's ID (stagiaire)
+                            }
+                        }
+                        else if (User.IsInRole("RH"))
+                        {
+                            // If the user is "rh", generate a new GUID for the Stagiaire ID
+                            stagiaire.Id = Guid.NewGuid(); // New random ID for "rh"
+                        }
+
+                        // Assign the user email to stagiaire (optional, as it's already included)
+                    }
+                    else
+                    {
+                        Console.WriteLine("User ID claim is not available.");
+                        ModelState.AddModelError(string.Empty, "Failed to retrieve user ID. Please try again.");
+                        return View(stagiaire);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("User is not authenticated.");
+                    ModelState.AddModelError(string.Empty, "User is not authenticated. Please log in.");
+                    return View(stagiaire);
+                }
 
                 // Handle Photo upload
                 if (!await HandleFileUpload(Path_Photo, stagiaire, "photos", "Path_Photo", ".png"))
@@ -89,12 +145,16 @@ namespace Gestion_Stagiaire.Controllers
                     return View(stagiaire);
                 }
 
+                // Save to the database
                 _context.Add(stagiaire);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Return the view with the model if validation fails
             return View(stagiaire);
         }
+
 
         // GET: Stagiaires/Edit/5
         public async Task<IActionResult> Edit(Guid? id)

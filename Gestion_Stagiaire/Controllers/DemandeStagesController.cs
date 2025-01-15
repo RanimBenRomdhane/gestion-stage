@@ -160,7 +160,9 @@ namespace Gestion_Stagiaire.Controllers
         {
             if (ModelState.IsValid)
             {    // Get the current user
-                var currentUser = await _userManager.GetUserAsync(User);
+               // var currentUser = await _userManager.GetUserAsync(User);
+
+                //currentUser = User.Identity.Name;
                 
                 // Handle Demande Stage File upload
                 if (Path_Demande_Stage != null && Path_Demande_Stage.Length > 0)

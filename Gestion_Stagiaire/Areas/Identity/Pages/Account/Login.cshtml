@@ -13,62 +13,55 @@
     <title>@ViewData["Title"]</title>
 </head>
 <body>
-    <div class="d-flex flex-column min-vh-100 bg-light">
-        <div class="d-flex justify-content-center align-items-center flex-grow-1">
-            <div class="col-md-4 col-lg-3">
-                <section class="p-5 rounded form-container">
-                    <h1 class="text-center title-text">@ViewData["Title"]</h1>
-                    <form id="account" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+        <div class="col-md-5">
+            <section class="p-5 rounded form-container">
+                <h1 class="text-center title-text">@ViewData["Title"]</h1>
+                </hr>
+                <form id="account" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-                        <!-- Email Input -->
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control custom-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                            <label asp-for="Input.Email" class="font-weight-bold">Adresse e-mail</label>
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
+                    <!-- Email Input -->
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Email" class="form-control custom-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="Input.Email">Adresse e-mail</label>
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
 
-                        <!-- Password Input -->
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" type="password" class="form-control custom-input" autocomplete="current-password" aria-required="true" placeholder="Mot de passe" />
-                            <label asp-for="Input.Password" class="font-weight-bold">Mot de passe</label>
-                            <span asp-validation-for="Input.Password" class="text-danger"></span>
-                        </div>
+                    <!-- Password Input -->
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Password" type="password" class="form-control custom-input" autocomplete="current-password" aria-required="true" placeholder="Mot de passe" />
+                        <label asp-for="Input.Password">Mot de passe</label>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
 
-                        <!-- Remember Me Checkbox -->
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheckbox" />
-                            <label class="form-check-label font-weight-bold" for="rememberMeCheckbox">
-                                Se souvenir de moi
-                            </label>
-                        </div>
+                    <!-- Remember Me Checkbox -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheckbox" />
+                        <label class="form-check-label" for="rememberMeCheckbox">
+                            Se souvenir de moi
+                        </label>
+                    </div>
 
-                        <!-- Submit Button -->
-                        <div>
-                            <button id="login-submit" type="submit" class="w-100 btn btn-lg custom-btn">
-                                Se connecter
-                            </button>
-                        </div>
+                    <!-- Submit Button -->
+                    <div>
+                        <button id="login-submit" type="submit" class="w-100 btn btn-lg custom-btn">
+                            Se connecter
+                        </button>
+                    </div>
 
-                        <!-- Additional Links -->
-                        <div class="text-center mt-4">
-                            <p>
-                                <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">Mot de passe oublié ?</a>
-                            </p>
-                            <p>
-                                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Créer un nouveau compte</a>
-                            </p>
-                        </div>
-                    </form>
-                </section>
-            </div>
+                    <!-- Additional Links -->
+                    <div class="text-center mt-4">
+                        <p>
+                            <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">Mot de passe oublié ?</a>
+                        </p>
+                        <p>
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Créer un nouveau compte</a>
+                        </p>
+                    </div>
+                </form>
+            </section>
         </div>
-
-        <!-- Footer -->
-        <footer>
-            <p>© 2025 WikMeek. Tous droits réservés.</p>
-            <a href="https://www.wikmeek.com" target="_blank">Visitez notre site</a>
-        </footer>
     </div>
 
     @section Scripts {
@@ -82,6 +75,8 @@
             font-size: 14px;
         }
 
+
+
         body {
             margin: 0;
             padding: 0;
@@ -94,16 +89,16 @@
             display: flex;
         }
 
-        .flex-column {
-            flex-direction: column;
+        .justify-content-center {
+            justify-content: center;
+        }
+
+        .align-items-center {
+            align-items: center;
         }
 
         .min-vh-100 {
             min-height: 100vh;
-        }
-
-        .flex-grow-1 {
-            flex-grow: 1;
         }
 
         .bg-light {
@@ -112,27 +107,28 @@
 
         /* Form container styling */
         .form-container {
-            background-color: white;
+            background-color: white; /* Fond blanc pour le formulaire */
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             animation: fadeIn 1.5s ease-in-out;
             border-radius: 15px;
             padding: 30px;
+            margin-top: -80px;
             transition: transform 0.5s ease;
-            margin-top: -50px; /* Formulaire un peu plus haut */
         }
 
-        .form-container:hover {
-            transform: translateY(-10px);
-        }
+            .form-container:hover {
+                transform: translateY(-10px);
+            }
 
-       
+
 
         /* Title styling */
         .title-text {
             color: #2c3e50;
             font-weight: bold;
-            font-size: 2rem; /* Taille de police plus petite mais claire */
+            font-size: 3rem;
             text-align: center;
+            transition: color 0.3s ease;
         }
 
         /* Input styles */
@@ -141,13 +137,13 @@
             border: 1px solid #dcdcdc;
             padding: 15px;
             border-radius: 10px;
-            color: #333; /* Couleur texte plus sombre pour plus de contraste */
+            color: darkgray;
         }
 
-        .custom-input:hover {
-            background-color: #f5f5f5;
-            border: 1px solid #3498db;
-        }
+            .custom-input:hover {
+                background-color: #f5f5f5;
+                border: 1px solid #3498db;
+            }
 
         /* Button styles */
         .custom-btn {
@@ -159,10 +155,11 @@
             padding: 12px 0;
         }
 
-        .custom-btn:hover {
-            transform: scale(1.1);
-            background-color: #c0392b;
-        }
+            .custom-btn:hover {
+                transform: scale(1.1);
+                background-color: #c0392b;
+                color: #fff;
+            }
 
         /* Links */
         a {
@@ -170,14 +167,28 @@
             transition: color 0.3s ease;
         }
 
-        a:hover {
-            color: #e74c3c;
-        }
+            a:hover {
+                color: #e74c3c;
+            }
 
         /* Validation error text */
         .text-danger {
             color: #e74c3c;
         }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #2c3e50 !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+            .navbar .navbar-brand, .navbar .nav-link {
+                color: #fff !important;
+            }
+
+                .navbar .nav-link:hover {
+                    color: #ecf0f1 !important;
+                }
 
         /* Footer styling */
         footer {
@@ -187,14 +198,29 @@
             text-align: center;
         }
 
-        footer a {
-            color: #3498db;
+            footer a {
+                color: #3498db;
+            }
+
+                footer a:hover {
+                    color: #ecf0f1;
+                    text-decoration: underline;
+                }
+        /* Modifier la couleur de la case à cocher */
+        .form-check-input:checked {
+            background-color: red;
+            border-color: red;
         }
 
-        footer a:hover {
-            color: #ecf0f1;
-            text-decoration: underline;
+        .form-check-input:focus {
+            border-color: red;
+            box-shadow: 0 0 0 0.25rem rgba(255, 0, 0, 0.25);
         }
+
+        .form-check-label {
+            color: #333; /* Couleur du texte */
+        }
+
     </style>
 </body>
 </html>
