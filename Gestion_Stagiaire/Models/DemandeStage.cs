@@ -16,8 +16,10 @@ namespace Gestion_Stagiaire.Models
         public DateTime Date_Fin { get; set; }
         public String? Path_Demande_Stage { get; set; }
         public DateTime Date_Demande { get; set; }
-        public Guid? AffectationId { get; set; }
-        public Affectation? Affectation { get; set; }
+        public Guid? DepartementId { get; set; }
+        public Departement? Departement { get; set; }
+        public String? Encadrant { get; set; }
+        public String? Titre_Projet { get; set; }
         public  String? Path_Rapport { get; set; }
         public String? Commentaire { get; set; }
 

@@ -3,7 +3,16 @@
 @{
     ViewData["Title"] = "Create";
 }
+@{
+    var errorMessage = ViewData["ErrorMessage"] as string;
+}
 
+@if (errorMessage != null)
+{
+    <script type="text/javascript">
+        alert('@errorMessage');
+    </script>
+}
 <h1>Create</h1>
 
 <h4>Stagiaire</h4>
@@ -32,11 +41,28 @@
                 <input asp-for="Telephone" class="form-control" />
                 <span asp-validation-for="Telephone" class="text-danger"></span>
             </div>
+            @{
+                // Check if the user is authenticated and their role is "stagiaire"
+                var isStagiaire = User.IsInRole("Stagiaire");
+            }
+
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <label for="Email" class="control-label">Email</label>
+                @if (isStagiaire)
+                {
+                // Display read-only email input if role is "stagiaire"
+                    <input type="email" id="Email" name="Email" class="form-control" value="@User.Identity?.Name" readonly />
+                }
+                else
+                {
+                // Display editable email input if role is "rh" or other roles
+                    <input type="email" id="Email" name="Email" class="form-control" />
+                }
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
+
+
+
             <div class="form-group">
                 <label asp-for="Ecole" class="control-label"></label>
                 <input asp-for="Ecole" class="form-control" />

@@ -14,7 +14,6 @@ namespace Gestion_Stagiaire.Data
 
         public DbSet<Stagiaire> Stagiaires { get; set; }
         public DbSet<DemandeStage> DemandesStage { get; set; }
-        public DbSet<Affectation> Affectations { get; set; }
         public DbSet<Departement> Departements { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Type_Stage> TypesStage { get; set; }
@@ -37,10 +36,10 @@ namespace Gestion_Stagiaire.Data
                 .HasKey(d => d.Id);
 
             modelBuilder.Entity<DemandeStage>()
-             .HasOne(d => d.Affectation)
-             .WithOne(a => a.DemandeStage)
-             .HasForeignKey<Affectation>(a => a.DemandeStageId)
-             .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(d => d.Departement)
+                .WithMany(a => a.DemandesStage)
+                .HasForeignKey(d => d.DepartementId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DemandeStage>()
                 .HasOne(d => d.Status)
@@ -53,13 +52,7 @@ namespace Gestion_Stagiaire.Data
         .WithMany(t => t.DemandesStage)
         .HasForeignKey(d => d.Type_StageId);
 
-            // Configure Affectation entity
-            modelBuilder.Entity<Affectation>()
-                .HasKey(a => a.Id);
 
-            modelBuilder.Entity<Affectation>()
-                .HasMany(a => a.Departement)
-                .WithMany(d => d.Affectations);
 
             // Configure Departement entity
             modelBuilder.Entity<Departement>()

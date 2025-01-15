@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Gestion_Stagiaire.Data;
 using Gestion_Stagiaire.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gestion_Stagiaire.Controllers
 {
+    [Authorize]
     public class StatusController : Controller
     {
         private readonly ApplicationDbContext _context;

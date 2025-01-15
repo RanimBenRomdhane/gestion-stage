@@ -1,87 +1,167 @@
 ﻿@model IEnumerable<Gestion_Stagiaire.Models.DemandeStage>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Demandes de Stage";
+
+    // Déterminer le rôle de l'utilisateur
+    var currentUser = UserManager.GetUserAsync(User).Result;
+    var userRoles = UserManager.GetRolesAsync(currentUser).Result;
+    var isStagiaire = userRoles.Contains("Stagiaire");
+    var isRH = userRoles.Contains("RH");
 }
+    @if (isRH)
+    {
+    <h1>Demandes de Stage</h1>
 
-<h1>Demandes de Stage</h1>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Créer une Nouvelle Demande</a>
+    </p>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+    <p>
+        <a asp-action="ExportToExcel" class="btn btn-success">Exporter vers Excel</a>
+    </p>
 
-<p>
-    <a asp-action="ExportToExcel" class="btn btn-success">Export to Excel</a>
-</p>
+    <!-- Barre de Recherche -->
+    <form method="get" asp-action="Index">
+        <div class="form-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par Nom, Prénom, Type de stage, Département, ou Statut..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
+        </div>
+    </form>
 
-<!-- Barre de recherche -->
-<form method="get" asp-action="Index">
-    <div class="form-group">
-        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par : Nom, Prenom, Type de Stage, ou Statut..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
-    </div>
-</form>
-
-<table class="table" id="demandesTable">
-    <thead>
-        <tr>
-            <th>Stagiaire</th>
-            <th>@Html.DisplayNameFor(model => model.Type_Stage)</th>
-            <th>@Html.DisplayNameFor(model => model.Date_Debut)</th>
-            <th>@Html.DisplayNameFor(model => model.Date_Fin)</th>
-            <th>@Html.DisplayNameFor(model => model.Status)</th>
-            <th>Demande Stage</th>
-            <th>@Html.DisplayNameFor(model => model.Date_Demande)</th>
-            <th>@Html.DisplayNameFor(model => model.Affectation)</th>
-            <th>@Html.DisplayNameFor(model => model.Commentaire)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table table-striped" id="demandesTable">
+        <thead>
             <tr>
-                <td>
-                    @item.Stagiaire.Nom @item.Stagiaire.Prenom
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.Type_Stage.Stage_Type)</td>
-                <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
-                <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
-                <td>@Html.DisplayFor(modelItem => item.Status.Reponse)</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
-                    {
-                        <a href="~/uploads/demandes/@item.Path_Demande_Stage" target="_blank">Voir la Demande de Stage</a>
-                    }
-                    else
-                    {
-                        <p>Aucune demande de stage disponible</p>
-                    }
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.Date_Demande)</td>
-                <td>@Html.DisplayFor(modelItem => item.Affectation)</td>
-                <td>@Html.DisplayFor(modelItem => item.Commentaire)</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <th>Stagiaire</th>
+                <th>@Html.DisplayNameFor(model => model.Type_Stage)</th>
+                <th>@Html.DisplayNameFor(model => model.Date_Debut)</th>
+                <th>@Html.DisplayNameFor(model => model.Date_Fin)</th>
+                <th>@Html.DisplayNameFor(model => model.Status)</th>
+                <th>Demande de Stage</th>
+                <th>@Html.DisplayNameFor(model => model.Date_Demande)</th>
+                <th>@Html.DisplayNameFor(model => model.Departement)</th>
+                <th>@Html.DisplayNameFor(model => model.Encadrant)</th>
+                <th>@Html.DisplayNameFor(model => model.Titre_Projet)</th>
+                <th>@Html.DisplayNameFor(model => model.Commentaire)</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Stagiaire.Nom @item.Stagiaire.Prenom
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Type_Stage.Stage_Type)</td>
+                    <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
+                    <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
+                    <td>@Html.DisplayFor(modelItem => item.Status.Reponse)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
+                        {
+                            <a href="~/uploads/demandes/@item.Path_Demande_Stage" target="_blank">Voir le fichier</a>
+                        }
+                        else
+                        {
+                            <span>Aucun fichier disponible</span>
+                        }
+                    </td>
+                    <td>@item.Date_Demande.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@Html.DisplayFor(modelItem => item.Departement.Nom_Departement)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Encadrant)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Titre_Projet)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Commentaire)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" title="Modifier cette demande">Modifier</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id" title="Voir les détails">Détails</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" title="Supprimer cette demande">Supprimer</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    }
+
+    @if(isStagiaire)
+{
+
+    <h1>Demandes de Stage</h1>
+
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Créer une Nouvelle Demande</a>
+    </p>
+
+
+    <!-- Barre de Recherche -->
+    <form method="get" asp-action="Index">
+        <div class="form-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par Nom, Prénom, Type de stage, Département, ou Statut..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
+        </div>
+    </form>
+
+    <table class="table table-striped" id="demandesTable">
+        <thead>
+            <tr>
+                <th>Stagiaire</th>
+                <th>@Html.DisplayNameFor(model => model.Type_Stage)</th>
+                <th>@Html.DisplayNameFor(model => model.Date_Debut)</th>
+                <th>@Html.DisplayNameFor(model => model.Date_Fin)</th>
+                <th>@Html.DisplayNameFor(model => model.Status)</th>
+                <th>Demande de Stage</th>
+                <th>@Html.DisplayNameFor(model => model.Date_Demande)</th>
+
+                
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Stagiaire.Nom @item.Stagiaire.Prenom
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Type_Stage.Stage_Type)</td>
+                    <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
+                    <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
+                    <td>@Html.DisplayFor(modelItem => item.Status.Reponse) </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
+                        {
+                            <a href="~/uploads/demandes/@item.Path_Demande_Stage" target="_blank">Voir le fichier</a>
+                        }
+                        else
+                        {
+                            <span>Aucun fichier disponible</span>
+                        }
+                    </td>
+                    <td>@item.Date_Demande.ToString("yyyy-MM-dd HH:mm:ss")</td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" title="Modifier cette demande">Modifier</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id" title="Voir les détails">Détails</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" title="Supprimer cette demande">Supprimer</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @section Scripts {
     <script>
         function filterResults() {
-            var input = document.getElementById('searchInput');
-            var filter = input.value.toLowerCase();
-            var table = document.getElementById('demandesTable');
-            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('demandesTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
-            for (var i = 0; i < rows.length; i++) {
-                var cells = rows[i].getElementsByTagName('td');
-                var match = false;
-                for (var j = 0; j < cells.length; j++) {
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let match = false;
+                for (let j = 0; j < cells.length; j++) {
                     if (cells[j].textContent.toLowerCase().includes(filter)) {
                         match = true;
                         break;
