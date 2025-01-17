@@ -65,7 +65,6 @@ body {
     .navbar .navbar-brand, .navbar .nav-link {
         color: #fff !important;
         font-weight: bold;
-        font-family: Arial, sans-serif;
     }
 
         .navbar .nav-link:hover {

@@ -104,13 +104,7 @@
                     color: #2c3e50;
                 }
 
-        footer {
-            margin-top: 40px;
-            background-color: #343a40;
-            color: #ffffff;
-            text-align: center;
-            padding: 10px 0;
-        }
+
 
         /* Style des noms de types de stage */
         .stage-type-name {
@@ -171,7 +165,7 @@
                 <thead>
                     <tr>
                         <th>Type de Stage</th>
-                        <th>Modifier</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -181,6 +175,7 @@
                             <td class="stage-type-name">@Html.DisplayFor(modelItem => item.Stage_Type)</td>
                             <td class="action-icons">
                                 <a asp-action="Edit" asp-route-id="@item.Id" title="Modifier"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" title="Supprimer"><i class="fas fa-trash"></i></a>
 
                             </td>
                         </tr>

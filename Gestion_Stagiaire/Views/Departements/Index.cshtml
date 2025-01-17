@@ -97,6 +97,7 @@
                 font-size: 20px;
                 color: #3498db;
                 transition: color 0.3s;
+                margin-right: 5px;
             }
 
                 .action-icons a:hover {
@@ -163,7 +164,7 @@
                 <thead>
                     <tr>
                         <th>Nom du Département</th>
-                        <th>Modifier</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -173,6 +174,7 @@
                             <td class="entity-name">@Html.DisplayFor(modelItem => item.Nom_Departement)</td>
                             <td class="action-icons">
                                 <a asp-action="Edit" asp-route-id="@item.Id" title="Modifier"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" title="Supprimer"><i class="fas fa-trash"></i></a>
 
                             </td>
                         </tr>

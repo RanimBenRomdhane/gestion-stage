@@ -165,7 +165,7 @@
                 <thead>
                     <tr>
                         <th>Réponse</th>
-                        <th>Modifier</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -175,6 +175,8 @@
                             <td class="status-reponse">@Html.DisplayFor(modelItem => item.Reponse)</td>
                             <td class="action-icons">
                                 <a asp-action="Edit" asp-route-id="@item.Id" title="Modifier"><i class="fas fa-edit"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" title="Supprimer"><i class="fas fa-trash"></i></a>
+
 
                             </td>
                         </tr>

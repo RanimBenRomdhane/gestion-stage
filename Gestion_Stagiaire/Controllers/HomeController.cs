@@ -14,7 +14,7 @@ namespace Gestion_Stagiaire.Controllers
         {
             _logger = logger;
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -30,5 +30,7 @@ namespace Gestion_Stagiaire.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
+
 }
