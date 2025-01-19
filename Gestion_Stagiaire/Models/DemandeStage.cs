@@ -14,6 +14,7 @@ namespace Gestion_Stagiaire.Models
         public Status? Status { get; set; }
         public DateTime Date_Debut { get; set; }
         public DateTime Date_Fin { get; set; }
+
         public String? Path_Demande_Stage { get; set; }
         public DateTime Date_Demande { get; set; }
         public Guid? DepartementId { get; set; }

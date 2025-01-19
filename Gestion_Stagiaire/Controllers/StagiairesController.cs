@@ -11,6 +11,8 @@ using Gestion_Stagiaire.Models;
 using Gestion_Stagiaires.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using X.PagedList;
+
 
 namespace Gestion_Stagiaire.Controllers
 {
@@ -24,26 +26,36 @@ namespace Gestion_Stagiaire.Controllers
             _context = context;
         }
 
-        // GET: Stagiaires
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, int? page)
         {
+            // Garder le terme de recherche dans la ViewData pour le renvoyer au formulaire
             ViewData["CurrentFilter"] = searchString;
 
+            // Requête de base pour récupérer tous les stagiaires
             var stagiaires = from s in _context.Stagiaires
                              select s;
 
+            // Appliquer le filtre de recherche si un terme est fourni
             if (!String.IsNullOrEmpty(searchString))
             {
                 stagiaires = stagiaires.Where(s => s.Nom.Contains(searchString)
-                                       || s.Prenom.Contains(searchString)
-                                       || s.Cin.ToString().Contains(searchString)
-                                       || s.Telephone.ToString().Contains(searchString)
-                                       || s.Ecole.ToString().Contains(searchString));
-
+                                                    || s.Prenom.Contains(searchString)
+                                                    || s.Cin.ToString().Contains(searchString)
+                                                    || s.Telephone.ToString().Contains(searchString)
+                                                    || s.Ecole.Contains(searchString)); // Correction de la comparaison pour Ecole
             }
 
-            return View(await stagiaires.ToListAsync());
+            // Calculer la pagination
+            int pageNumber = page ?? 1; // Si la page est null, commencer par la page 1
+            int pageSize = 10; // Nombre d'éléments par page
+
+            // Appliquer la pagination après avoir filtré les résultats
+            var paginatedStagiaires = await stagiaires.ToPagedListAsync(pageNumber, pageSize);
+
+            return View(paginatedStagiaires);
         }
+
+
 
         // GET: Stagiaires/Details/5
         public async Task<IActionResult> Details(Guid? id)

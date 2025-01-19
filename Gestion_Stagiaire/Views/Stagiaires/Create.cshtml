@@ -1,96 +1,228 @@
-﻿@model Gestion_Stagiaires.Models.Stagiaire
-
+﻿@using Microsoft.AspNetCore.Identity
+@model Gestion_Stagiaires.Models.Stagiaire
+@inject UserManager<IdentityUser> UserManager
 @{
-    ViewData["Title"] = "Create";
-}
-@{
-    var errorMessage = ViewData["ErrorMessage"] as string;
-}
-
-@if (errorMessage != null)
+    ViewData["Title"] = "Créer un Stagiaire";
+    var currentUser = UserManager.GetUserAsync(User).Result;
+    var userRoles = UserManager.GetRolesAsync(currentUser).Result;
+    var isStagiaire = userRoles.Contains("Stagiaire");}
+<head><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+@if (isStagiaire)
 {
-    <script type="text/javascript">
-        alert('@errorMessage');
-    </script>
+    <h1 class="page-title">Créer Mon Profil</h1> 
 }
-<h1>Create</h1>
+else
+{
+    <h1 class="page-title">Ajouter un Stagiaire</h1> 
+}
 
-<h4>Stagiaire</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+
+
+<div class="stagiaire-container">
+    <div class="stagiaire-card">
         <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nom" class="control-label"></label>
-                <input asp-for="Nom" class="form-control" />
-                <span asp-validation-for="Nom" class="text-danger"></span>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Division en deux colonnes -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Nom" class="control-label label-bold"></label>
+                        <input asp-for="Nom" class="form-control form-control-custom" />
+                        <span asp-validation-for="Nom" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Prenom" class="control-label label-bold">Prénom</label>
+                        <input asp-for="Prenom" class="form-control form-control-custom" />
+                        <span asp-validation-for="Prenom" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Cin" class="control-label label-bold">CIN</label>
+                        <input asp-for="Cin" class="form-control form-control-custom" />
+                        <span asp-validation-for="Cin" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Telephone" class="control-label label-bold">Téléphone</label>
+                        <input asp-for="Telephone" class="form-control form-control-custom" />
+                        <span asp-validation-for="Telephone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label label-bold"></label>
+                        <input asp-for="Email" class="form-control form-control-custom" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Ecole" class="control-label label-bold"></label>
+                        <input asp-for="Ecole" class="form-control form-control-custom" />
+                        <span asp-validation-for="Ecole" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Path_Photo" class="control-label label-bold">Photo</label>
+                        <input asp-for="Path_Photo" class="form-control form-control-custom" type="file" />
+                        <span asp-validation-for="Path_Photo" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Path_CV" class="control-label label-bold">CV</label>
+                        <input asp-for="Path_CV" class="form-control form-control-custom" type="file" />
+                        <span asp-validation-for="Path_CV" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Prenom" class="control-label"></label>
-                <input asp-for="Prenom" class="form-control" />
-                <span asp-validation-for="Prenom" class="text-danger"></span>
+                
+            @if (isStagiaire)
+            {
+                 <!-- Bouton personnalisé -->
+            <div class="form-group text-center mt-4">
+                <button type="submit" class="btn btn-custom">
+                    <i class="fas fa-save"></i> Confirmer votre profil
+                </button>
             </div>
-            <div class="form-group">
-                <label asp-for="Cin" class="control-label"></label>
-                <input asp-for="Cin" class="form-control" />
-                <span asp-validation-for="Cin" class="text-danger"></span>
+            }
+           
+            else
+            {
+                 <!-- Bouton personnalisé -->
+            <div class="form-group text-center mt-4">
+                <button type="submit" class="btn btn-custom">
+                    <i class="fas fa-save"></i> Ajouter
+                </button>
             </div>
-            <div class="form-group">
-                <label asp-for="Telephone" class="control-label"></label>
-                <input asp-for="Telephone" class="form-control" />
-                <span asp-validation-for="Telephone" class="text-danger"></span>
-            </div>
-            @{
-                // Check if the user is authenticated and their role is "stagiaire"
-                var isStagiaire = User.IsInRole("Stagiaire");
+                            <!-- Bouton retour sous la carte -->
+    <div class="back-button-wrapper text-center mt-4">
+        <a asp-action="Index" class="back-button">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
             }
 
-            <div class="form-group">
-                <label for="Email" class="control-label">Email</label>
-                @if (isStagiaire)
-                {
-                // Display read-only email input if role is "stagiaire"
-                    <input type="email" id="Email" name="Email" class="form-control" value="@User.Identity?.Name" readonly />
-                }
-                else
-                {
-                // Display editable email input if role is "rh" or other roles
-                    <input type="email" id="Email" name="Email" class="form-control" />
-                }
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-
-
-            <div class="form-group">
-                <label asp-for="Ecole" class="control-label"></label>
-                <input asp-for="Ecole" class="form-control" />
-                <span asp-validation-for="Ecole" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Path_Photo" class="control-label">Photo</label>
-                <input asp-for="Path_Photo" class="form-control" type="file" />
-                <span asp-validation-for="Path_Photo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Path_CV" class="control-label">CV</label>
-                <input asp-for="Path_CV" class="form-control" type="file" />
-                <span asp-validation-for="Path_CV" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
         </form>
     </div>
+
+
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
+@section Scripts
+{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+<style>
+    /* Container principal */
+    .stagiaire-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    /* Carte du formulaire */
+    .stagiaire-card {
+        width: 100%;
+        max-width: 800px;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        background-color: #fff;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    }
+                    .stagiaire-card:hover {
+                    transform: translateY(-10px);
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+                }
+
+    /* Espacement des champs */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    /* Champs personnalisés */
+    .form-control-custom {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 1rem;
+        font-weight: normal;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+    }
+
+    /* Labels en gras */
+    .label-bold {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    /* Bouton personnalisé */
+    .btn-custom {
+        display: inline-block;
+        background-color: #3498db;
+        color: white;
+        border-radius: 30px;
+        padding: 10px 25px;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #2980b9;
+        transform: scale(1.05);
+        color:white;
+    }
+
+    /* Bouton retour */
+    .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        color: white;
+        background-color: #7f8c8d;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+        background-color: white;
+        color: #7f8c8d;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button i {
+        margin-right: 8px;
+    }
+
+    /* Titre */
+  .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50; /* Dark, elegant blue-gray */
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db; /* Underline with a modern blue */
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase; /* Optional: Make text all uppercase */
+        letter-spacing: 1px; /* Slightly increase spacing for a cleaner look */
+    }
+</style>

@@ -48,7 +48,7 @@
         <dd class="col-sm-10">
             @if (!string.IsNullOrEmpty(Model.Path_Demande_Stage))
             {
-                <a href="~/uploads/demandes/@Model.Path_Demande_Stage" target="_blank">Voir la Demande de Stage</a>
+                <a href="~/uploads/demandes/@Model.Path_Demande_Stage?timestamp=@DateTime.Now.Ticks" target="_blank">Voir la Demande de Stage</a>
             }
             else
             {
@@ -86,7 +86,7 @@
         <dd class="col-sm-10">
             @if (!string.IsNullOrEmpty(Model.Path_Rapport))
             {
-                <a href="~/uploads/demandes/@Model.Path_Rapport" target="_blank">Voir le Rapport de Stage</a>
+                    <a href="~/uploads/demandes/@Model.Path_Rapport?timestamp=@DateTime.Now.Ticks" target="_blank">Voir le Rapport de Stage</a>
             }
             else
             {

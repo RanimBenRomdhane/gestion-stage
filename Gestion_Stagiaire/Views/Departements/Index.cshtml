@@ -8,9 +8,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
+    <title >@ViewData["Title"]</title>
     <style>
-
+                            .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50; /* Dark, elegant blue-gray */
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db; /* Underline with a modern blue */
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase; /* Optional: Make text all uppercase */
+        letter-spacing: 1px; /* Slightly increase spacing for a cleaner look */
+    }
 
         .container {
             margin-top: 20px;
@@ -147,7 +158,7 @@
     <div class="container">
         <!-- Formulaire pour créer un département -->
         <div class="form-container mb-4">
-            <h1>@ViewData["Title"]</h1>
+            <h1 class="page-title">@ViewData["Title"]</h1>
             <form asp-action="Create">
                 <div class="mb-3">
                     <input type="text" class="form-control" id="Nom_Departement" name="Nom_Departement" placeholder="Saisir le nom du département">

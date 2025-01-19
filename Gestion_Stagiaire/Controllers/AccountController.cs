@@ -82,7 +82,7 @@ namespace Gestion_Stagiaire.Controllers
             }
 
             // Sign in the user
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _signInManager.SignInAsync(user, isPersistent: true);
 
             // Rediriger vers la page d'accueil
             return RedirectToAction("Index", "Home");

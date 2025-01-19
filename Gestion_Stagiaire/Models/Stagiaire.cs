@@ -10,6 +10,7 @@ namespace Gestion_Stagiaires.Models
         public String Nom { get; set; }
         public String Prenom { get; set; }
         [Range(10000000, 99999999, ErrorMessage = "Le numero de CIN doit comporter 8 chiffres.")]
+        
         public int Cin { get; set; }
 
         [Range(10000000, 99999999, ErrorMessage = "Le numero de telephone doit comporter 8 chiffres.")]

@@ -20,11 +20,14 @@ namespace Gestion_Stagiaire.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private UserManager<IdentityUser> userManager;
+        private readonly ILogger<DemandeStagesController> _logger;
 
-        public DemandeStagesController(ApplicationDbContext context)
+
+        public DemandeStagesController(ApplicationDbContext context, ILogger<DemandeStagesController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: DemandeStages
@@ -133,7 +136,8 @@ namespace Gestion_Stagiaire.Controllers
         // GET: DemandeStages/Create
         public IActionResult Create()
         {
-            var demandeStage = new DemandeStage
+            
+        var demandeStage = new DemandeStage
             {
                 Date_Demande = DateTime.Now,
                 Date_Debut = DateTime.MinValue,
@@ -160,8 +164,7 @@ namespace Gestion_Stagiaire.Controllers
         {
             if (ModelState.IsValid)
             {    // Get the current user
-               // var currentUser = await _userManager.GetUserAsync(User);
-
+                    
                 //currentUser = User.Identity.Name;
                 
                 // Handle Demande Stage File upload
@@ -244,14 +247,22 @@ namespace Gestion_Stagiaire.Controllers
                 return NotFound();
             }
 
-            var demandeStage = await _context.DemandesStage.FindAsync(id);
+            // Récupérer la demande de stage depuis la base de données
+            var demandeStage = await _context.DemandesStage
+                    .Include(d => d.Stagiaire) // Include Stagiaire for the navigation property
+        .FirstOrDefaultAsync(d => d.Id == id);
             if (demandeStage == null)
             {
                 return NotFound();
             }
+
+            // Assurez-vous de passer les valeurs nécessaires à la vue
             PopulateDropDownLists(demandeStage);
+
+            // Renvoyer la vue avec les données de la demande de stage
             return View(demandeStage);
         }
+
 
         // POST: DemandeStages/Edit/5
         [HttpPost]
@@ -262,7 +273,7 @@ namespace Gestion_Stagiaire.Controllers
             {
                 return NotFound();
             }
-
+           
             if (ModelState.IsValid)
             {
                 try
@@ -338,6 +349,16 @@ namespace Gestion_Stagiaire.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState)
+                {
+                    _logger.LogWarning($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
+                PopulateDropDownLists(demandeStage);
+                return View(demandeStage);
+            }
+
             PopulateDropDownLists(demandeStage);
             return View(demandeStage);
         }
@@ -411,6 +432,7 @@ namespace Gestion_Stagiaire.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
+      
+       
     }
 }

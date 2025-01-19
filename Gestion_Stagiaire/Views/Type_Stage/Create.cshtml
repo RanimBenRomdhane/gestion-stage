@@ -1,7 +1,7 @@
 ﻿@model Gestion_Stagiaire.Models.Type_Stage
 
 @{
-    ViewData["Title"] = "Créer un Type de Stage";
+    ViewData["Title"] = "Ajouter un Type de Stage";
 }
 
 <!DOCTYPE html>
@@ -12,7 +12,18 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-
+                    .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50; /* Dark, elegant blue-gray */
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db; /* Underline with a modern blue */
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase; /* Optional: Make text all uppercase */
+        letter-spacing: 1px; /* Slightly increase spacing for a cleaner look */
+    }
 
         h1 {
             color: #2c3e50;
@@ -142,7 +153,7 @@
 
                     <!-- Bouton de création -->
                     <div class="form-group">
-                        <input type="submit" value="Créer" class="btn btn-success w-100 transition" />
+                        <input type="submit" value="Ajouter" class="btn btn-success w-100 transition" />
                     </div>
                 </form>
                 <!-- Bouton Retour à la liste placé juste après le formulaire -->
