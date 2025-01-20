@@ -12,6 +12,7 @@ using Gestion_Stagiaires.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using X.PagedList;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 
 namespace Gestion_Stagiaire.Controllers
@@ -76,10 +77,14 @@ namespace Gestion_Stagiaire.Controllers
         }
 
         // GET: Stagiaires/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+          
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            ViewBag.UserEmail = userEmail;
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -96,8 +101,8 @@ namespace Gestion_Stagiaire.Controllers
                     }
                     // Retrieve user information
                     string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var userEmail = User.Identity?.Name;
-
+                    //var userEmail = User.Identity?.Name;
+                    var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
                     if (!string.IsNullOrEmpty(userId))
                     {
                         Console.WriteLine($"Authenticated User ID: {userId}");
@@ -108,7 +113,7 @@ namespace Gestion_Stagiaire.Controllers
                             // Check if a Stagiaire with the same email already exists
                             var existingStagiaire = await _context.Stagiaires
                                 .FirstOrDefaultAsync(s => s.Email == userEmail);
-                            //  stagiaire.Email = userEmail;
+                              stagiaire.Email = userEmail;
 
 
                             if (existingStagiaire != null)

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Security.Claims;
 using Gestion_Stagiaires.Models;
+using Azure.Core;
 
 namespace Gestion_Stagiaire.Controllers
 {
@@ -187,7 +188,7 @@ namespace Gestion_Stagiaire.Controllers
             }
 
           //  var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+          
             var stagiaire = await _context.Stagiaires
                                            .FirstOrDefaultAsync(s => s.Id == Guid.Parse(userId)); // Assuming 'UserId' is a foreign key
 
@@ -201,7 +202,7 @@ namespace Gestion_Stagiaire.Controllers
                 // You can log or return a message to help debug why the user wasn't found
                 Console.WriteLine("Stagiaire not found for user ID: " + userId);
             }
-
+          
 
             if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var stagiaireId))
             {

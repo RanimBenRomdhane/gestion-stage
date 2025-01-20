@@ -50,7 +50,6 @@ namespace Gestion_Stagiaire.Controllers
             var name = result.Principal.FindFirstValue(ClaimTypes.Name);
             var id = result.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
-
             // Check if the user exists
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -86,7 +85,8 @@ namespace Gestion_Stagiaire.Controllers
     {
         new Claim(ClaimTypes.Email, email),
         new Claim(ClaimTypes.Name, name),
-        new Claim(ClaimTypes.NameIdentifier, id)
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+
 
     };
 
