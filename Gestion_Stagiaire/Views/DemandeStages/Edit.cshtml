@@ -292,7 +292,8 @@
         <div class="form-column">
             <div class="form-group">
                 <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
-                <input type="text" asp-for="StagiaireId" ReadOnly
+                        <input type="hidden" asp-for="StagiaireId" />
+                <input type="text"  ReadOnly
                        class="form-control" 
                        value="@($"{Model.Stagiaire.Prenom} {Model.Stagiaire.Nom}")" />
                 <span asp-validation-for="StagiaireId" class="text-danger"></span>

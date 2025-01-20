@@ -4,6 +4,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,18 +27,20 @@ namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
+            // Sign out of Identity cookies (for Identity authentication)
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
-            if (returnUrl != null)
-            {
-                return LocalRedirect(returnUrl);
-            }
-            else
-            {
-                // This needs to be a redirect so that the browser performs a new
-                // request and the identity for the user gets updated.
-                return RedirectToPage();
-            }
+
+            // Explicitly delete cookies (e.g., Identity cookies)
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Identity.Application");
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
+
+            // Sign out of external authentication cookies (e.g., Google)
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Log out of Google (external provider) by redirecting to Google's logout URL
+            string googleLogoutUrl = "https://accounts.google.com/Logout";
+            return Redirect(googleLogoutUrl);
         }
+
     }
 }

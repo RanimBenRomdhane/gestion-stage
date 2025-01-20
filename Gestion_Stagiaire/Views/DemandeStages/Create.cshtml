@@ -3,9 +3,27 @@
 @inject UserManager<IdentityUser> UserManager
 
 @{
-    ViewData["Title"] = "Creer";
+    ViewData["Title"] = "Create";
+    bool isStagiaire = false;
+    bool isAdmin = false;
+    bool isRh = false;
 
+
+    // Use asynchronous operations
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser != null)
+        {
+            var userRoles = await UserManager.GetRolesAsync(currentUser);
+            isStagiaire = userRoles.Contains("Stagiaire");
+            isAdmin = userRoles.Contains("Admin");
+            isRh = userRoles.Contains("RH");
+
+        }
     }
+}
+
 
 <head>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -134,63 +152,73 @@
 <div class="form-container">
     <div class="stagiaire-card">
 
-                <form asp-action="Create" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="Date_Demande" />
-                    <div class="form-row">
-                        <!-- Colonne 1 -->
-                        <div class="form-column">
-                            <div class="form-group">
-                                <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
-                                <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.StagiaireId"></select>
-                                <span asp-validation-for="StagiaireId" class="text-danger"></span>
-                            </div>
-                        
-                         }
-                            <div class="form-group">
-                                <label asp-for="Type_StageId" class="control-label">Type de Stage</label>
-                                <select asp-for="Type_StageId" class="form-control" asp-items="ViewBag.Type_StageId"></select>
-                                <span asp-validation-for="Type_StageId" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="Date_Debut" class="control-label">Date de début</label>
-                                <input asp-for="Date_Debut" class="form-control" type="date"
-                                       value="@(Model.Date_Debut == DateTime.MinValue ? "" : Model.Date_Debut.ToString("yyyy-MM-dd"))" />
-                                <span asp-validation-for="Date_Debut" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-group">
-                                <label asp-for="Date_Fin" class="control-label">Date de fin</label>
-                                <input asp-for="Date_Fin" class="form-control" type="date"
-                                       value="@(Model.Date_Fin == DateTime.MinValue ? "" : Model.Date_Fin.ToString("yyyy-MM-dd"))" />
-                                <span asp-validation-for="Date_Fin" class="text-danger"></span>
-                            </div>
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Date_Demande" />
+            <div class="form-row">
+                <!-- Colonne 1 -->
+                <div class="form-column">
+                    @if (isRh)
+                        {
+                    <div class="form-group">
+                        <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
+                        <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.Stagiaire"></select>
+                        <span asp-validation-for="StagiaireId" class="text-danger"></span>
+                    </div>
+                        }
+                    @if (isStagiaire)
+                    {
+                        <div class="form-group">
+                            <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
+                            <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.StagiaireId" ReadOnly ></select>
+                            <span asp-validation-for="StagiaireId" class="text-danger"></span>
                         </div>
+                    }
 
-                        <!-- Colonne 2 -->
-                        <div class="form-column">
-                            <div class="form-group">
-                                <label asp-for="Path_Demande_Stage" class="control-label">Fichier de la demande de stage</label>
-                                <input asp-for="Path_Demande_Stage" class="form-control" type="file" />
-                                <span asp-validation-for="Path_Demande_Stage" class="text-danger"></span>
-                            </div>
-
-
-
-                            <div class="form-group">
-                                <label asp-for="Commentaire" class="control-label">Commentaire</label>
-                                <textarea asp-for="Commentaire" class="form-control">@Model.Commentaire</textarea>
-                                <span asp-validation-for="Commentaire" class="text-danger"></span>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label asp-for="Type_StageId" class="control-label">Type de Stage</label>
+                        <select asp-for="Type_StageId" class="form-control" asp-items="ViewBag.Type_StageId"></select>
+                        <span asp-validation-for="Type_StageId" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group text-center">
-                        <input type="submit" value="Sauvegarder les modifications" class="btn btn-primary" />
+                    <div class="form-group">
+                        <label asp-for="Date_Debut" class="control-label">Date de début</label>
+                        <input asp-for="Date_Debut" class="form-control" type="date"
+                               value="@(Model.Date_Debut == DateTime.MinValue ? "" : Model.Date_Debut.ToString("yyyy-MM-dd"))" />
+                        <span asp-validation-for="Date_Debut" class="text-danger"></span>
                     </div>
-                </form>
+
+                    <div class="form-group">
+                        <label asp-for="Date_Fin" class="control-label">Date de fin</label>
+                        <input asp-for="Date_Fin" class="form-control" type="date"
+                               value="@(Model.Date_Fin == DateTime.MinValue ? "" : Model.Date_Fin.ToString("yyyy-MM-dd"))" />
+                        <span asp-validation-for="Date_Fin" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Colonne 2 -->
+                <div class="form-column">
+                    <div class="form-group">
+                        <label asp-for="Path_Demande_Stage" class="control-label">Fichier de la demande de stage</label>
+                        <input asp-for="Path_Demande_Stage" class="form-control" type="file" />
+                        <span asp-validation-for="Path_Demande_Stage" class="text-danger"></span>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <label asp-for="Commentaire" class="control-label">Commentaire</label>
+                        <textarea asp-for="Commentaire" class="form-control">@Model.Commentaire</textarea>
+                        <span asp-validation-for="Commentaire" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Sauvegarder les modifications" class="btn btn-primary" />
+            </div>
+        </form>
         
 </div>
 </div>

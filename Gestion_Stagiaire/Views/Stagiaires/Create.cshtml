@@ -4,8 +4,10 @@
 @{
     ViewData["Title"] = "Créer un Stagiaire";
     var currentUser = UserManager.GetUserAsync(User).Result;
+    var useremail = User.Identity.Name;
     var userRoles = UserManager.GetRolesAsync(currentUser).Result;
-    var isStagiaire = userRoles.Contains("Stagiaire");}
+    var isStagiaire = userRoles.Contains("Stagiaire");
+}
 <head><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 @if (isStagiaire)
@@ -51,13 +53,24 @@ else
                         <span asp-validation-for="Telephone" class="text-danger"></span>
                     </div>
                 </div>
-
+               
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label label-bold"></label>
-                        <input asp-for="Email" class="form-control form-control-custom" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
+                    @if (isStagiaire)
+                    {
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label label-bold"></label>
+                            <input asp-for="Email" class="form-control form-control-custom" readonly value="@useremail" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label label-bold"></label>
+                            <input asp-for="Email" class="form-control form-control-custom" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    }
+
 
                     <div class="form-group">
                         <label asp-for="Ecole" class="control-label label-bold"></label>

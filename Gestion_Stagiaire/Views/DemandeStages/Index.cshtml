@@ -7,14 +7,22 @@
 
 @{
     ViewData["Title"] = "Demandes de Stage";
-    var currentUser = UserManager.GetUserAsync(User).Result;
-    var userRoles = UserManager.GetRolesAsync(currentUser).Result;
-    var isStagiaire = userRoles.Contains("Stagiaire");
-    var isAdmin = userRoles.Contains("Admin");
+    // Initialize variables
+    bool isStagiaire = false;
+    bool isAdmin = false;
+
+    // Use asynchronous operations
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser != null)
+        {
+            var userRoles = await UserManager.GetRolesAsync(currentUser);
+            isStagiaire = userRoles.Contains("Stagiaire");
+            isAdmin = userRoles.Contains("Admin");
+        }
+    }
 }
-
-
-
 @if (isStagiaire)
 {
         <h1 class="page-title">Mes Demandes </h1>

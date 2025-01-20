@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Security.Claims;
+using Gestion_Stagiaires.Models;
 
 namespace Gestion_Stagiaire.Controllers
 {
@@ -23,7 +26,8 @@ namespace Gestion_Stagiaire.Controllers
         private readonly ILogger<DemandeStagesController> _logger;
 
 
-        public DemandeStagesController(ApplicationDbContext context, ILogger<DemandeStagesController> logger)
+
+        public DemandeStagesController(ApplicationDbContext context, ILogger<DemandeStagesController> logger )
         {
             _context = context;
             _userManager = userManager;
@@ -33,6 +37,8 @@ namespace Gestion_Stagiaire.Controllers
         // GET: DemandeStages
         public async Task<IActionResult> Index(string searchString)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             ViewData["CurrentFilter"] = searchString;
 
             var demandesStage = from d in _context.DemandesStage
@@ -133,23 +139,91 @@ namespace Gestion_Stagiaire.Controllers
             return View(demandeStage);
         }
 
-        // GET: DemandeStages/Create
-        public IActionResult Create()
+        [HttpGet("current-user")]
+        public async Task<IActionResult> GetCurrentUser()
         {
-            
-        var demandeStage = new DemandeStage
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userInfo = new
+            {
+                Id = user.Id,
+            };
+
+            return Ok(userInfo);
+        }
+
+        // GET: DemandeStages/Create
+        public async Task<IActionResult> Create()
+        {
+            var demandeStage = new DemandeStage
             {
                 Date_Demande = DateTime.Now,
                 Date_Debut = DateTime.MinValue,
                 Date_Fin = DateTime.MinValue
             };
 
-            ViewData["StagiaireId"] = new SelectList(_context.Stagiaires.Select(s => new
+            // Check if the user is authenticated
+            if (User.Identity.IsAuthenticated)
+            {
+                var claims = User.Claims.ToList();
+                foreach (var claim in claims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
+            }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var existingStagiaire = await _context.Stagiaires
+    .FirstOrDefaultAsync(s => s.Id == Guid.Parse(userId));
+
+            if (existingStagiaire == null)
+            {
+                // The StagiaireId doesn't exist, handle accordingly (e.g., add new entry or throw an error)
+                ModelState.AddModelError(string.Empty, "The specified Stagiaire ID does not exist.");
+            }
+
+          //  var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var stagiaire = await _context.Stagiaires
+                                           .FirstOrDefaultAsync(s => s.Id == Guid.Parse(userId)); // Assuming 'UserId' is a foreign key
+
+            if (stagiaire != null)
+            {
+                ViewBag.StagiaireId = stagiaire.Id;
+                ViewBag.StagiaireNomPrenom = $"{stagiaire.Nom} {stagiaire.Prenom}"; // Add Prenom to display full name
+            }
+            else
+            {
+                // You can log or return a message to help debug why the user wasn't found
+                Console.WriteLine("Stagiaire not found for user ID: " + userId);
+            }
+
+
+            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var stagiaireId))
+            {
+                ViewData["StagiaireId"] = new SelectList(
+                    _context.Stagiaires
+                        .Where(s => s.Id == stagiaireId)
+                        .Select(s => new
+                        {
+                            Id = s.Id,
+                            FullName = s.Nom + " " + s.Prenom
+                        }),
+                    "Id",
+                    "FullName"
+                );
+            }
+            ViewData["Stagiaire"] = new SelectList(_context.Stagiaires.Select(s => new
             {
                 Id = s.Id,
                 FullName = s.Nom + " " + s.Prenom
             }), "Id", "FullName");
 
+            // Return the view with the current data
             ViewData["Type_StageId"] = new SelectList(_context.TypesStage, "Id", "Stage_Type");
             ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Reponse");
             ViewData["DepartementId"] = new SelectList(_context.Departements, "Id", "Nom_Departement");
@@ -162,6 +236,33 @@ namespace Gestion_Stagiaire.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DemandeStage demandeStage, IFormFile? Path_Demande_Stage, IFormFile? Path_Rapport)
         {
+          /*  
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (currentUser == null)
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            // Fetch the StagiaireId for the logged-in user
+            var stagiaire = await _context.Stagiaires
+                .Where(s => s.Id.ToString() == currentUser.Id)
+                .Select(s => new { s.Id, s.Nom, s.Prenom })
+                .FirstOrDefaultAsync();
+
+            if (stagiaire == null)
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            var userRoles = await _userManager.GetRolesAsync(currentUser);
+            var isStagiaire = userRoles.Contains("Stagiaire");
+            var isAdmin = userRoles.Contains("Admin");
+            
+            // Pass Stagiaire information to the view
+            ViewBag.StagiaireId = stagiaire.Id;
+            ViewBag.StagiaireNomPrenom = $"{stagiaire.Nom} {stagiaire.Prenom}";
+          */
+
             if (ModelState.IsValid)
             {    // Get the current user
                     
