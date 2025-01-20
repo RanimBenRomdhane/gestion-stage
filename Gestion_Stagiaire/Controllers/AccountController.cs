@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace Gestion_Stagiaire.Controllers
 {
@@ -14,15 +15,18 @@ namespace Gestion_Stagiaire.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, ILogger<AccountController> logger)
+
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _logger = logger;
         }
 
-        // Login avec Google
         [HttpGet]
         public IActionResult Login()
         {
@@ -31,7 +35,6 @@ namespace Gestion_Stagiaire.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        // Réponse de l'authentification Google
         [HttpGet]
         public async Task<IActionResult> GoogleResponse()
         {
@@ -39,16 +42,16 @@ namespace Gestion_Stagiaire.Controllers
 
             if (!result.Succeeded)
             {
-                // Gestion des erreurs d'authentification
                 return RedirectToAction("Login");
             }
 
-            // Récupérer les informations de l'utilisateur (email, nom, prénom)
+            // Retrieve user information
             var email = result.Principal.FindFirstValue(ClaimTypes.Email);
             var name = result.Principal.FindFirstValue(ClaimTypes.Name);
-            var firstName = result.Principal.FindFirstValue(ClaimTypes.GivenName); // Prénom
+            var id = result.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Vérifier si l'utilisateur existe déjà
+
+            // Check if the user exists
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
@@ -58,51 +61,53 @@ namespace Gestion_Stagiaire.Controllers
                     Email = email
                 };
 
-                // Créer l'utilisateur
+                // Create the user
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
                     return RedirectToAction("Error", "Home");
                 }
 
-                // Vérifier si le rôle "Stagiaire" existe et le créer s'il n'existe pas
-                var roleExist = await _roleManager.RoleExistsAsync("Stagiaire");
-                if (!roleExist)
+                // Add default role if needed
+                var roleExists = await _roleManager.RoleExistsAsync("Stagiaire");
+                if (!roleExists)
                 {
-                    var role = new IdentityRole("Stagiaire");
-                    await _roleManager.CreateAsync(role);
+                    await _roleManager.CreateAsync(new IdentityRole("Stagiaire"));
                 }
 
-                // Assigner le rôle "Stagiaire"
-                var roleResult = await _userManager.AddToRoleAsync(user, "Stagiaire");
-                if (!roleResult.Succeeded)
-                {
-                    return RedirectToAction("Error", "Home");
-                }
+                await _userManager.AddToRoleAsync(user, "Stagiaire");
             }
 
-            // Sign in the user
-            await _signInManager.SignInAsync(user, isPersistent: true);
+            // Get the roles of the user
+            var roles = await _userManager.GetRolesAsync(user);
 
-            // Rediriger vers la page d'accueil
+            // Add claims, including roles
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Email, email),
+        new Claim(ClaimTypes.Name, name),
+        new Claim(ClaimTypes.NameIdentifier, id)
+
+    };
+
+            // Add roles as claims
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            // Create a new ClaimsIdentity
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Create the ClaimsPrincipal
+            var principal = new ClaimsPrincipal(identity);
+
+            // Sign in the user with the claims
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            // Redirect to ensure claims are refreshed
             return RedirectToAction("Index", "Home");
         }
-
-
-        // Déconnexion
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Logout()
-        {
-            // Déconnexion de l'utilisateur
-            await _signInManager.SignOutAsync();
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // Rediriger vers la page de login
-            return RedirectToAction("Login");
-        }
-        
-
+       
     }
 }

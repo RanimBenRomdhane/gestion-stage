@@ -1,21 +1,46 @@
-﻿@page
-@model LogoutModel
-@{
-    ViewData["Title"] = "Log out";
-}
+﻿
+#nullable disable
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+
+namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
+{
+    public class LogoutModel : PageModel
+    {
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ILogger<LogoutModel> _logger;
+
+        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
         {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
+            _signInManager = signInManager;
+            _logger = logger;
         }
-        else
+
+        public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            <p>You have successfully logged out of the application.</p>
+            await _signInManager.SignOutAsync();
+
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Identity.Application");
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            _logger.LogInformation("User logged out.");
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return LocalRedirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToPage("/Index");
+            }
         }
     }
-</header>
+}

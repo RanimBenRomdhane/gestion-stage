@@ -50,7 +50,7 @@
                             <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
                             <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
                             <td>
-                            @if (item.Status.Reponse == "En Cours")
+                            @if (item.Status.Reponse == "En cours")
                             {
                                         <button class="btn btn-secondary" disabled>En cours</button>
                             }
@@ -78,14 +78,18 @@
                             }
                             </td>
                             <td>@item.Date_Demande.ToString("yyyy-MM-dd HH:mm")</td>
-                                    <td class="action-icons">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon" title="Modifier">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="details-icon" title="Détails">
+<td class="text-end action-icons">
+    <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon" title="Modifier">
+        <i class="fas fa-edit"></i>
+    </a>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="details-icon" title="Détails">
                                             <i class="fas fa-info-circle"></i>
                                         </a>
-                            </td>
+</td>
+
+
+
+                            
                         </tr>
                 }
                 </tbody>
@@ -274,12 +278,26 @@ else
         font-size: 20px;
         transition: color 0.3s;
     }
+    .action-icons, .action-icons8 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
 
     .edit-icon i {
         color: #007bff;
     }
 
     .edit-icon i:hover {
+        color: #0056b3;
+    }
+        .edit-icon8 i {
+        color: #007bff;
+    }
+
+    .edit-icon8 i:hover {
         color: #0056b3;
     }
 

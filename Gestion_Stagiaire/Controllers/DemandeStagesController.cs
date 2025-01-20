@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Security.Claims;
 
 namespace Gestion_Stagiaire.Controllers
 {
@@ -143,8 +145,22 @@ namespace Gestion_Stagiaire.Controllers
                 Date_Debut = DateTime.MinValue,
                 Date_Fin = DateTime.MinValue
             };
-
-            ViewData["StagiaireId"] = new SelectList(_context.Stagiaires.Select(s => new
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var stagiaireId))
+            {
+                ViewData["StagiaireId"] = new SelectList(
+                    _context.Stagiaires
+                        .Where(s => s.Id == stagiaireId)
+                        .Select(s => new
+                        {
+                            Id = s.Id,
+                            FullName = s.Nom + " " + s.Prenom
+                        }),
+                    "Id",
+                    "FullName"
+                );
+            }
+            ViewData["Stagiaire"] = new SelectList(_context.Stagiaires.Select(s => new
             {
                 Id = s.Id,
                 FullName = s.Nom + " " + s.Prenom

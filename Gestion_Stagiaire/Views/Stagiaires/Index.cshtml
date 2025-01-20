@@ -1,9 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using X.PagedList
-@using X.PagedList.Mvc.Core
 
-
-@model IPagedList<Gestion_Stagiaires.Models.Stagiaire>
+@model IEnumerable<Gestion_Stagiaires.Models.Stagiaire>
 
 @inject UserManager<IdentityUser> UserManager
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
@@ -11,205 +8,143 @@
 @{
     ViewData["Title"] = "Index";
 
-    // Déterminer le rôle de l'utilisateur
     var currentUser = UserManager.GetUserAsync(User).Result;
     var userRoles = UserManager.GetRolesAsync(currentUser).Result;
     var isStagiaire = userRoles.Contains("Stagiaire");
 }
-<head><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-</head>
 
-
-@if (isStagiaire){
-
-<h1 class="page-title">Mon Profil</h1>
-            <!-- Affichage pour les stagiaires -->
-            <div class="container stagiaire-container">
+@if (isStagiaire)
+{
+    <h1 class="page-title">Mon Profil</h1>
+    <div class="container stagiaire-container">
         @foreach (var item in Model)
         {
-                            <div class="stagiaire-card">
-                                <!-- Photo dans le coin gauche -->
+            <div class="stagiaire-card">
                 @if (!string.IsNullOrEmpty(item.Path_Photo))
                 {
-                            <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks"  alt="Photo de @item.Nom" 
-                                 class="stagiaire-photo" />
-
+                    <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks" alt="Photo de @item.Nom" class="stagiaire-photo" />
                 }
                 else
                 {
-                                            <div class="stagiaire-photo placeholder-photo text-center d-flex align-items-center justify-content-center bg-light">
-                                                <i class="fas fa-user-circle fa-3x text-secondary"></i>
-                                            </div>
+                    <div class="stagiaire-photo placeholder-photo text-center d-flex align-items-center justify-content-center bg-light">
+                        <i class="fas fa-user-circle fa-3x text-secondary"></i>
+                    </div>
                 }
 
-                                <!-- Contenu à droite -->
-                                <div class="card-body">
-                                    <h5 class="card-title">@item.Nom @item.Prenom</h5>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item"><strong>CIN:</strong> @item.Cin</li>
-                                        <li class="list-group-item"><strong>Téléphone:</strong> @item.Telephone</li>
-                                        <li class="list-group-item"><strong>Email:</strong> @item.Email</li>
-                                        <li class="list-group-item"><strong>École:</strong> @item.Ecole</li>
-                                        
-                                        <li class="list-group-item"><strong>CV:</strong> 
-                                            @if (!string.IsNullOrEmpty(item.Path_CV))
-                                            {
-                                                            <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks" target="_blank">Consulter le CV</a>
-                                            }
-                                            else
-                                            {
-                                                <span>Aucun CV disponible</span>
-                                            }
-</li>
+                <div class="card-body">
+                    <h5 class="card-title">@item.Nom @item.Prenom</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>CIN:</strong> @item.Cin</li>
+                        <li class="list-group-item"><strong>Téléphone:</strong> @item.Telephone</li>
+                        <li class="list-group-item"><strong>Email:</strong> @item.Email</li>
+                        <li class="list-group-item"><strong>École:</strong> @item.Ecole</li>
+                        <li class="list-group-item"><strong>CV:</strong>
+                            @if (!string.IsNullOrEmpty(item.Path_CV))
+                            {
+                                <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks" target="_blank">Consulter le CV</a>
+                            }
+                            else
+                            {
+                                <span>Aucun CV disponible</span>
+                            }
+                        </li>
+                    </ul>
+                </div>
 
-
-                                    </ul>
-                                </div>
-
-                                <!-- Bouton Modifier -->
-
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon"  title="Modifier">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </div>
-    <div class="back-button-wrapper">
-    <a asp-action="Index" asp-controller="Home" class="back-button">
-                <i class="fas fa-arrow-left"></i> Retour à l'accueil
-    </a>
-</div>
-        }
+                <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                </a>
             </div>
+        }
+        <div class="back-button-wrapper">
+            <a asp-action="Index" asp-controller="Home" class="back-button">
+                <i class="fas fa-arrow-left"></i> Retour à l'accueil
+            </a>
+        </div>
+    </div>
 }
 else
 {
     <h1 class="page-title">Gestion des Stagiaires</h1>
-          <p class="action-buttons">
-    <a asp-action="ExportToExcel" class="btn btn-success btn-action">
-        <i class="fas fa-file-excel"></i> Exporter en Excel
-    </a>
-    <a asp-action="Create" class="btn btn-primary btn-action">
-        <i class="fas fa-plus"></i> Ajouter un stagiaire
-    </a>
-</p>
+    <p class="action-buttons">
+        <a asp-action="ExportToExcel" class="btn btn-success btn-action">
+            <i class="fas fa-file-excel"></i> Exporter en Excel
+        </a>
+        <a asp-action="Create" class="btn btn-primary btn-action">
+            <i class="fas fa-plus"></i> Ajouter un stagiaire
+        </a>
+    </p>
 
-<!-- Barre de recherche -->
-<form method="get"  class="search-bar" action="@Url.Action("Index")">
-    <div class="input-group">
-        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
-        <span class="input-group-text">
-            <i class="fas fa-search"></i>
-        </span>
-    </div>
-</form>
+    <form method="get" class="search-bar" action="@Url.Action("Index")">
+        <div class="input-group">
+            <input type="text" id="searchInput" name="searchString" class="form-control" placeholder="Rechercher..." value="@ViewData["CurrentFilter"]" />
+            <span class="input-group-text">
+                <i class="fas fa-search"></i>
+            </span>
+        </div>
+    </form>
 
-<table class="table table-hover table-stagiaires" id="stagiairesTable">
-    <thead class="table-dark">
-        <tr>
-            <th>Photo</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>CIN</th>
-            <th>Téléphone</th>
-            <th>Email</th>
-            <th>École</th>
-            <th>CV</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table table-hover table-stagiaires" id="stagiairesTable">
+        <thead class="table-dark">
             <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.Path_Photo))
-                    {
-                                    <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks" alt="Photo de @item.Nom" class="rounded-circle photo-table" />
-                    }
-                    else
-                    {
-                        <p>Aucune photo</p>
-                    }
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.Nom)</td>
-                <td>@Html.DisplayFor(modelItem => item.Prenom)</td>
-                <td>@Html.DisplayFor(modelItem => item.Cin)</td>
-                <td>@Html.DisplayFor(modelItem => item.Telephone)</td>
-                <td class="mail">@Html.DisplayFor(modelItem => item.Email)</td>
-                <td>@Html.DisplayFor(modelItem => item.Ecole)</td>
-                               <td>@if (!string.IsNullOrEmpty(item.Path_CV))
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>CIN</th>
+                <th>Téléphone</th>
+                <th>Email</th>
+                <th>École</th>
+                <th>CV</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Path_Photo))
                         {
-                <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks" 
-                   target="_blank" 
-                   class="btn btn-primary btn-sm voir-btn">
-                    Voir
-                </a>
+                            <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks" alt="Photo de @item.Nom" class="rounded-circle photo-table" />
                         }
-
-        </td>
-
-                       <td class="action-icons">
-            <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon2" title="Modifier">
-                <i class="fas fa-edit"></i>
-            </a>
-            <a asp-action="Details" asp-route-id="@item.Id" class="details-icon2" title="Détails">
-                <i class="fas fa-info-circle"></i>
-            </a>
+                        else
+                        {
+                            <p>Aucune photo</p>
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Nom)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Prenom)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Cin)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Telephone)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Ecole)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Path_CV))
+                        {
+                            <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks" target="_blank" class="btn btn-primary btn-sm voir-btn">Voir</a>
+                        }
+                    </td>
+                    <td class="action-icons">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon2" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="details-icon2" title="Détails">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
                         @if (userRoles.Contains("Admin"))
                         {
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="delete-icon2" title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                    </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="delete-icon2" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         }
-        </td>
-
-            </tr>
-        }
-    </tbody>
-</table>
-<!-- Pagination -->
-<div class="pagination-container">
-    <ul class="pagination">
-        @if (Model.HasPreviousPage)
-        {
-            <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1, searchString = ViewData["CurrentFilter"] })" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                <span class="page-link">&laquo;</span>
-            </li>
-        }
-
-        @for (var i = 1; i <= Model.PageCount; i++)
-        {
-            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = i, searchString = ViewData["CurrentFilter"] })">@i</a>
-            </li>
-        }
-
-        @if (Model.HasNextPage)
-        {
-            <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1, searchString = ViewData["CurrentFilter"] })" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                <span class="page-link">&raquo;</span>
-            </li>
-        }
-    </ul>
-</div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
-@section Scripts {
+
             <script>
                 function filterResults() {
                     var input = document.getElementById('searchInput');
@@ -439,54 +374,6 @@ else
             .back-button i {
                 margin-right: 8px;
             }
-
-                .pagination-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 15px;
-    }
-
-    .pagination {
-        list-style-type: none;
-        padding: 0;
-        display: flex;
-        gap: 3px;
-    }
-
-    .pagination .page-item {
-        margin: 0;
-    }
-
-    .pagination .page-item.disabled .page-link {
-        color: #ddd;
-        pointer-events: none;
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: #6c757d;
-        color: white;
-    }
-
-    .pagination .page-link {
-        padding: 5px 10px; /* Boutons plus petits */
-        border-radius: 3px; /* Coins arrondis */
-        color: #6c757d; /* Gris pour les boutons */
-        text-decoration: none;
-        border: 1px solid #6c757d;
-        font-size: 12px; /* Texte plus petit */
-    }
-
-    .pagination .page-link:hover {
-        background-color: #5a6268; /* Couleur de survol plus foncée */
-        color: white;
-        border-color: #5a6268; /* Bordure survolée */
-    }
-
-    .pagination .page-link:focus {
-        outline: none; /* Supprime le contour par défaut du focus */
-        box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5); /* Ajout d'un léger effet de focus */
-    }
-
 
             </style>
 }

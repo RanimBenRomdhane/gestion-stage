@@ -141,6 +141,7 @@
             <form asp-action="Edit" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Date_Demande" />
 
                 <!-- Première ligne -->
                 <div class="form-row">
@@ -245,14 +246,6 @@
 
                 <!-- Sixième ligne -->
                 <div class="form-row">
-                                        <div class="form-column">
-                        <div class="form-group">
-                            <label asp-for="Date_Demande" class="control-label">Date de la demande</label>
-                            <input asp-for="Date_Demande" class="form-control"
-                                   type="text" value="@(Model.Date_Demande == DateTime.MinValue ? "" : Model.Date_Demande.ToString("yyyy-MM-dd HH:mm"))" readonly />
-                        </div>
-                    </div>
-
 
                     <div class="form-column">
                         <div class="form-group">
@@ -279,37 +272,30 @@
 @if (isStagiaire)
 {
     <h1>Modifier une demande de stage</h1>
-    <h4>Modifier les détails de la demande</h4>
 
     <div class="form-container">
             <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+             <input type="hidden" asp-for="StatusId" />
+               <input type="hidden" asp-for="DepartementId" />
+                  <input type="hidden" asp-for="Encadrant" />
+                  <input type="hidden" asp-for="Titre_Projet" />
+                                    <input type="hidden" asp-for="Date_Demande" />
+                                    <input type="hidden" asp-for="StagiaireId" />
+
 
 
                     <!-- Première ligne -->
              <div class="form-row">
         <div class="form-column">
             <div class="form-group">
-                <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
-                <input type="text" asp-for="StagiaireId" ReadOnly
-                       class="form-control" 
-                       value="@($"{Model.Stagiaire.Prenom} {Model.Stagiaire.Nom}")" />
-                <span asp-validation-for="StagiaireId" class="text-danger"></span>
-            </div>
+                   <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
+                    <input type="hidden" asp-for="StagiaireId" />
+            <input type="text"  ReadOnly class="form-control" value="@($"{Model.Stagiaire.Prenom} {Model.Stagiaire.Nom}")" />
+            <span asp-validation-for="StagiaireId" class="text-danger"></span>
         </div>
-    </div>
-
-
-
-                                                        <input type="hidden" asp-for="StatusId" />
-                                                        <input type="hidden" asp-for="DepartementId" />
-                                                        <input type="hidden" asp-for="Titre_Projet" />
-
-
-                                                        
-
-                        <div class="form-row">
+        </div>
 
                         <div class="form-column">
                         <div class="form-group">
@@ -349,18 +335,15 @@
                                     <span asp-validation-for="Date_Debut" class="text-danger"></span>
                                 </div>
                             </div>
-                     </div>
-
-
-                                                 <div class="form-row">
-                                            <div class="form-column">
-                            <div class="form-group">
-                                <label asp-for="Date_Demande" class="control-label">Date de la demande</label>
-                                <input asp-for="Date_Demande" class="form-control"
-                                       type="text" value="@(Model.Date_Demande == DateTime.MinValue ? "" : Model.Date_Demande.ToString("yyyy-MM-dd HH:mm"))" readonly />
-                            </div>
+                     
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label asp-for="Commentaire" class="control-label">Commentaire</label>
+                            <textarea asp-for="Commentaire" class="form-control">@Model.Commentaire</textarea>
+                            <span asp-validation-for="Commentaire" class="text-danger"></span>
                         </div>
-                                                    </div>
+                    </div>
+     </div>
 
                     <!-- Quatrième ligne -->
                     <div class="form-row">
@@ -372,14 +355,7 @@
                                 <span asp-validation-for="Date_Fin" class="text-danger"></span>
                             </div>
                          </div>
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label asp-for="Commentaire" class="control-label">Commentaire</label>
-                            <textarea asp-for="Commentaire" class="form-control">@Model.Commentaire</textarea>
-                            <span asp-validation-for="Commentaire" class="text-danger"></span>
-                        </div>
-                    </div>
-
+                         <div></div>
 
                     </div>
 

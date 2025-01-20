@@ -1,27 +1,27 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model Gestion_Stagiaires.Models.Stagiaire
 @inject UserManager<IdentityUser> UserManager
+
 @{
     ViewData["Title"] = "Créer un Stagiaire";
-    var currentUser = UserManager.GetUserAsync(User).Result;
-    var userRoles = UserManager.GetRolesAsync(currentUser).Result;
-    var isStagiaire = userRoles.Contains("Stagiaire");}
-<head><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-</head>
+    var currentUser = await UserManager.GetUserAsync(User);
+    var userRoles = await UserManager.GetRolesAsync(currentUser);
+    var isStagiaire = userRoles.Contains("Stagiaire");
+    var email = currentUser?.Email;
+}
+
 @if (isStagiaire)
 {
-    <h1 class="page-title">Créer Mon Profil</h1> 
+    <h1 class="page-title">Créer Mon Profil</h1>
 }
 else
 {
-    <h1 class="page-title">Ajouter un Stagiaire</h1> 
+    <h1 class="page-title">Ajouter un Stagiaire</h1>
 }
-
-
 
 <div class="stagiaire-container">
     <div class="stagiaire-card">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Create" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <!-- Division en deux colonnes -->
@@ -34,30 +34,40 @@ else
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Prenom" class="control-label label-bold">Prénom</label>
+                        <label asp-for="Prenom" class="control-label label-bold"></label>
                         <input asp-for="Prenom" class="form-control form-control-custom" />
                         <span asp-validation-for="Prenom" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Cin" class="control-label label-bold">CIN</label>
+                        <label asp-for="Cin" class="control-label label-bold"></label>
                         <input asp-for="Cin" class="form-control form-control-custom" />
                         <span asp-validation-for="Cin" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Telephone" class="control-label label-bold">Téléphone</label>
+                        <label asp-for="Telephone" class="control-label label-bold"></label>
                         <input asp-for="Telephone" class="form-control form-control-custom" />
                         <span asp-validation-for="Telephone" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label label-bold"></label>
-                        <input asp-for="Email" class="form-control form-control-custom" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
+                    @if (isStagiaire)
+                    {
+                        <div class="form-group">
+                                <label for="Email"><strong>Email</strong></label>
+                            <input type="email" id="Email" name="Email" class="form-control" value="@email" readonly />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label label-bold"></label>
+                            <input asp-for="Email" class="form-control form-control-custom" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    }
 
                     <div class="form-group">
                         <label asp-for="Ecole" class="control-label label-bold"></label>
@@ -78,45 +88,42 @@ else
                     </div>
                 </div>
             </div>
-                
-            @if (isStagiaire)
-            {
-                 <!-- Bouton personnalisé -->
-            <div class="form-group text-center mt-4">
-                <button type="submit" class="btn btn-custom">
-                    <i class="fas fa-save"></i> Confirmer votre profil
-                </button>
-            </div>
-            }
-           
-            else
-            {
-                 <!-- Bouton personnalisé -->
-            <div class="form-group text-center mt-4">
-                <button type="submit" class="btn btn-custom">
-                    <i class="fas fa-save"></i> Ajouter
-                </button>
-            </div>
-                            <!-- Bouton retour sous la carte -->
-    <div class="back-button-wrapper text-center mt-4">
-        <a asp-action="Index" class="back-button">
-            <i class="fas fa-arrow-left"></i> Retour à la liste
-        </a>
-    </div>
-            }
 
+            <!-- Boutons -->
+            <div class="form-group text-center mt-4">
+                @if (isStagiaire)
+                {
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save"></i> Confirmer votre profil
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-custom">
+                        <i class="fas fa-save"></i> Ajouter
+                    </button>
+                }
+            </div>
+
+            @if (!isStagiaire)
+            {
+                <div class="back-button-wrapper text-center mt-4">
+                    <a asp-action="Index" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+            }
         </form>
-    </div>
-
-
+    
 </div>
 
 @section Scripts
 {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
     }
-}
+
 
 <style>
     /* Container principal */

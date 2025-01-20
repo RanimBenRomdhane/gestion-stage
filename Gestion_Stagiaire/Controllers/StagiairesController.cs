@@ -11,7 +11,6 @@ using Gestion_Stagiaire.Models;
 using Gestion_Stagiaires.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using X.PagedList;
 
 
 namespace Gestion_Stagiaire.Controllers
@@ -26,9 +25,9 @@ namespace Gestion_Stagiaire.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string searchString, int? page)
+        public async Task<IActionResult> Index(string searchString)
         {
-            // Garder le terme de recherche dans la ViewData pour le renvoyer au formulaire
+            // Garde le terme de recherche dans la ViewData
             ViewData["CurrentFilter"] = searchString;
 
             // Requête de base pour récupérer tous les stagiaires
@@ -42,19 +41,14 @@ namespace Gestion_Stagiaire.Controllers
                                                     || s.Prenom.Contains(searchString)
                                                     || s.Cin.ToString().Contains(searchString)
                                                     || s.Telephone.ToString().Contains(searchString)
-                                                    || s.Ecole.Contains(searchString)); // Correction de la comparaison pour Ecole
+                                                    || s.Ecole.ToString().Contains(searchString));
             }
 
-            // Calculer la pagination
-            int pageNumber = page ?? 1; // Si la page est null, commencer par la page 1
-            int pageSize = 10; // Nombre d'éléments par page
+            // Récupérer tous les stagiaires filtrés
+            var stagiairesList = await stagiaires.ToListAsync();
 
-            // Appliquer la pagination après avoir filtré les résultats
-            var paginatedStagiaires = await stagiaires.ToPagedListAsync(pageNumber, pageSize);
-
-            return View(paginatedStagiaires);
+            return View(stagiairesList);
         }
-
 
 
         // GET: Stagiaires/Details/5
