@@ -11,6 +11,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Security.Claims;
+using Gestion_Stagiaires.Models;
+using Azure.Core;
 
 namespace Gestion_Stagiaire.Controllers
 {
@@ -20,26 +24,45 @@ namespace Gestion_Stagiaire.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private UserManager<IdentityUser> userManager;
+        private readonly ILogger<DemandeStagesController> _logger;
 
-        public DemandeStagesController(ApplicationDbContext context)
+
+
+        public DemandeStagesController(ApplicationDbContext context, ILogger<DemandeStagesController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: DemandeStages
         public async Task<IActionResult> Index(string searchString)
         {
+            // Récupérer l'ID de l'utilisateur connecté
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Récupérer le rôle de l'utilisateur
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            // Stocker le filtre actuel pour l'utiliser dans la vue
             ViewData["CurrentFilter"] = searchString;
 
-            var demandesStage = from d in _context.DemandesStage
-                                .Include(d => d.Stagiaire)
-                                .Include(d => d.Type_Stage)
-                                .Include(d => d.Status)
-                                .Include(d => d.Departement)
-                                select d;
+            // Base de la requête avec les inclusions nécessaires
+            var demandesStage = _context.DemandesStage
+                .Include(d => d.Stagiaire)
+                .Include(d => d.Type_Stage)
+                .Include(d => d.Status)
+                .Include(d => d.Departement)
+                .AsQueryable();
 
-            if (!String.IsNullOrEmpty(searchString))
+            // Si l'utilisateur est un stagiaire, filtrer par son ID
+            if (userRole == "Stagiaire")
+            {
+                demandesStage = demandesStage.Where(d => d.Stagiaire.Id.ToString() == userId);
+            }
+
+            // Appliquer le filtre de recherche si fourni
+            if (!string.IsNullOrEmpty(searchString))
             {
                 demandesStage = demandesStage.Where(d =>
                     d.Stagiaire.Nom.Contains(searchString)
@@ -49,8 +72,10 @@ namespace Gestion_Stagiaire.Controllers
                     || d.Departement.Nom_Departement.Contains(searchString));
             }
 
+            // Retourner la liste filtrée à la vue
             return View(await demandesStage.ToListAsync());
         }
+
 
         // Export to Excel
         public async Task<IActionResult> ExportToExcel()
@@ -130,8 +155,25 @@ namespace Gestion_Stagiaire.Controllers
             return View(demandeStage);
         }
 
+        [HttpGet("current-user")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userInfo = new
+            {
+                Id = user.Id,
+            };
+
+            return Ok(userInfo);
+        }
+
         // GET: DemandeStages/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var demandeStage = new DemandeStage
             {
@@ -140,12 +182,64 @@ namespace Gestion_Stagiaire.Controllers
                 Date_Fin = DateTime.MinValue
             };
 
-            ViewData["StagiaireId"] = new SelectList(_context.Stagiaires.Select(s => new
+            // Check if the user is authenticated
+            if (User.Identity.IsAuthenticated)
+            {
+                var claims = User.Claims.ToList();
+                foreach (var claim in claims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
+            }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var existingStagiaire = await _context.Stagiaires
+    .FirstOrDefaultAsync(s => s.Id == Guid.Parse(userId));
+
+            if (existingStagiaire == null)
+            {
+                // The StagiaireId doesn't exist, handle accordingly (e.g., add new entry or throw an error)
+                ModelState.AddModelError(string.Empty, "The specified Stagiaire ID does not exist.");
+            }
+
+            //  var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var stagiaire = await _context.Stagiaires
+                                           .FirstOrDefaultAsync(s => s.Id == Guid.Parse(userId)); // Assuming 'UserId' is a foreign key
+
+            if (stagiaire != null)
+            {
+                ViewBag.StagiaireId = stagiaire.Id;
+                ViewBag.StagiaireNomPrenom = $"{stagiaire.Nom} {stagiaire.Prenom}"; // Add Prenom to display full name
+            }
+            else
+            {
+                // You can log or return a message to help debug why the user wasn't found
+                Console.WriteLine("Stagiaire not found for user ID: " + userId);
+            }
+
+
+            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var stagiaireId))
+            {
+                ViewData["StagiaireId"] = new SelectList(
+                    _context.Stagiaires
+                        .Where(s => s.Id == stagiaireId)
+                        .Select(s => new
+                        {
+                            Id = s.Id,
+                            FullName = s.Nom + " " + s.Prenom
+                        }),
+                    "Id",
+                    "FullName"
+                );
+            }
+            ViewData["Stagiaire"] = new SelectList(_context.Stagiaires.Select(s => new
             {
                 Id = s.Id,
                 FullName = s.Nom + " " + s.Prenom
             }), "Id", "FullName");
 
+            // Return the view with the current data
             ViewData["Type_StageId"] = new SelectList(_context.TypesStage, "Id", "Stage_Type");
             ViewData["StatusId"] = new SelectList(_context.Statuses, "Id", "Reponse");
             ViewData["DepartementId"] = new SelectList(_context.Departements, "Id", "Nom_Departement");
@@ -158,12 +252,38 @@ namespace Gestion_Stagiaire.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DemandeStage demandeStage, IFormFile? Path_Demande_Stage, IFormFile? Path_Rapport)
         {
+            /*  
+              var currentUser = await _userManager.GetUserAsync(User);
+
+              if (currentUser == null)
+              {
+                  return RedirectToAction("AccessDenied", "Account");
+              }
+
+              // Fetch the StagiaireId for the logged-in user
+              var stagiaire = await _context.Stagiaires
+                  .Where(s => s.Id.ToString() == currentUser.Id)
+                  .Select(s => new { s.Id, s.Nom, s.Prenom })
+                  .FirstOrDefaultAsync();
+
+              if (stagiaire == null)
+              {
+                  return RedirectToAction("AccessDenied", "Account");
+              }
+              var userRoles = await _userManager.GetRolesAsync(currentUser);
+              var isStagiaire = userRoles.Contains("Stagiaire");
+              var isAdmin = userRoles.Contains("Admin");
+
+              // Pass Stagiaire information to the view
+              ViewBag.StagiaireId = stagiaire.Id;
+              ViewBag.StagiaireNomPrenom = $"{stagiaire.Nom} {stagiaire.Prenom}";
+            */
+
             if (ModelState.IsValid)
             {    // Get the current user
-               // var currentUser = await _userManager.GetUserAsync(User);
 
                 //currentUser = User.Identity.Name;
-                
+
                 // Handle Demande Stage File upload
                 if (Path_Demande_Stage != null && Path_Demande_Stage.Length > 0)
                 {
@@ -244,19 +364,26 @@ namespace Gestion_Stagiaire.Controllers
                 return NotFound();
             }
 
-            var demandeStage = await _context.DemandesStage.FindAsync(id);
+            // Récupérer la demande de stage depuis la base de données
+            var demandeStage = await _context.DemandesStage
+                    .Include(d => d.Stagiaire) // Include Stagiaire for the navigation property
+        .FirstOrDefaultAsync(d => d.Id == id);
             if (demandeStage == null)
             {
                 return NotFound();
             }
+
+            // Assurez-vous de passer les valeurs nécessaires à la vue
             PopulateDropDownLists(demandeStage);
+
+            // Renvoyer la vue avec les données de la demande de stage
             return View(demandeStage);
         }
 
-        // POST: DemandeStages/Edit/5
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,StagiaireId,Type_StageId,Date_Debut,Date_Fin,StatusId,Date_Demande,Encadrant,DepartementId,Commentaire,Titre_Projet")] DemandeStage demandeStage, IFormFile? Path_Demande_Stage, IFormFile? Path_Rapport)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,StagiaireId,Type_StageId,Date_Debut,Date_Fin,StatusId,Date_Demande,Encadrant,DepartementId,Commentaire,Titre_Projet,Path_Demande_Stage,Path_Rapport")] DemandeStage demandeStage, IFormFile? Path_Demande_Stage, IFormFile? Path_Rapport)
         {
             if (id != demandeStage.Id)
             {
@@ -267,6 +394,13 @@ namespace Gestion_Stagiaire.Controllers
             {
                 try
                 {
+                    // Retrieve the existing record from the database
+                    var existingDemandeStage = await _context.DemandesStage.FindAsync(id);
+                    if (existingDemandeStage == null)
+                    {
+                        return NotFound();
+                    }
+
                     // Validate Type_StageId
                     var typeStageExists = await _context.TypesStage.AnyAsync(ts => ts.Id == demandeStage.Type_StageId);
                     if (!typeStageExists)
@@ -298,6 +432,11 @@ namespace Gestion_Stagiaire.Controllers
 
                         demandeStage.Path_Demande_Stage = $"{demandeStage.StagiaireId}.pdf";
                     }
+                    else
+                    {
+                        // Preserve existing file path
+                        demandeStage.Path_Demande_Stage = existingDemandeStage.Path_Demande_Stage;
+                    }
 
                     // Handle Rapport PFE File upload
                     if (Path_Rapport != null && Path_Rapport.Length > 0)
@@ -321,8 +460,14 @@ namespace Gestion_Stagiaire.Controllers
 
                         demandeStage.Path_Rapport = $"{demandeStage.StagiaireId}_rapport.pdf";
                     }
+                    else
+                    {
+                        // Preserve existing file path
+                        demandeStage.Path_Rapport = existingDemandeStage.Path_Rapport;
+                    }
 
-                    _context.Update(demandeStage);
+                    // Update other properties manually
+                    _context.Entry(existingDemandeStage).CurrentValues.SetValues(demandeStage);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -338,6 +483,17 @@ namespace Gestion_Stagiaire.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState)
+                {
+                    _logger.LogWarning($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
+                PopulateDropDownLists(demandeStage);
+                return View(demandeStage);
+            }
+
             PopulateDropDownLists(demandeStage);
             return View(demandeStage);
         }
@@ -411,6 +567,7 @@ namespace Gestion_Stagiaire.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
 
     }
 }

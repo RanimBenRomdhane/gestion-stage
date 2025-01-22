@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gestion_Stagiaire.Data.Migrations
+namespace Gestion_Stagiaire.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250108183327_005")]
-    partial class _005
+    [Migration("20250114215433_001")]
+    partial class _001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,10 +31,6 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Affectation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Commentaire")
                         .HasColumnType("nvarchar(max)");
 
@@ -47,25 +43,86 @@ namespace Gestion_Stagiaire.Data.Migrations
                     b.Property<DateTime>("Date_Fin")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("DepartementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Encadrant")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Path_Demande_Stage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Path_Rapport")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("StagiaireId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<Guid?>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Titre_Projet")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type_Stage")
+                    b.Property<Guid>("Type_StageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartementId");
+
+                    b.HasIndex("StagiaireId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("Type_StageId");
+
+                    b.ToTable("DemandesStage");
+                });
+
+            modelBuilder.Entity("Gestion_Stagiaire.Models.Departement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Nom_Departement")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StagiaireId");
+                    b.ToTable("Departements");
+                });
 
-                    b.ToTable("DemandesStage");
+            modelBuilder.Entity("Gestion_Stagiaire.Models.Status", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reponse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Statuses");
+                });
+
+            modelBuilder.Entity("Gestion_Stagiaire.Models.Type_Stage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Stage_Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TypesStage");
                 });
 
             modelBuilder.Entity("Gestion_Stagiaires.Models.Stagiaire", b =>
@@ -312,13 +369,35 @@ namespace Gestion_Stagiaire.Data.Migrations
 
             modelBuilder.Entity("Gestion_Stagiaire.Models.DemandeStage", b =>
                 {
+                    b.HasOne("Gestion_Stagiaire.Models.Departement", "Departement")
+                        .WithMany("DemandesStage")
+                        .HasForeignKey("DepartementId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Gestion_Stagiaires.Models.Stagiaire", "Stagiaire")
                         .WithMany("DemandesStage")
                         .HasForeignKey("StagiaireId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gestion_Stagiaire.Models.Status", "Status")
+                        .WithMany("DemandesStage")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gestion_Stagiaire.Models.Type_Stage", "Type_Stage")
+                        .WithMany("DemandesStage")
+                        .HasForeignKey("Type_StageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Departement");
+
                     b.Navigation("Stagiaire");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("Type_Stage");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -370,6 +449,21 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestion_Stagiaire.Models.Departement", b =>
+                {
+                    b.Navigation("DemandesStage");
+                });
+
+            modelBuilder.Entity("Gestion_Stagiaire.Models.Status", b =>
+                {
+                    b.Navigation("DemandesStage");
+                });
+
+            modelBuilder.Entity("Gestion_Stagiaire.Models.Type_Stage", b =>
+                {
+                    b.Navigation("DemandesStage");
                 });
 
             modelBuilder.Entity("Gestion_Stagiaires.Models.Stagiaire", b =>

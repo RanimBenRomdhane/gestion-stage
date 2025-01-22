@@ -3,48 +3,64 @@
 @inject UserManager<IdentityUser> UserManager
 
 @{
-    ViewData["Title"] = "Creer";
+    ViewData["Title"] = "Create";
+    bool isStagiaire = false;
+    bool isAdmin = false;
+    bool isRh = false;
 
-    var currentUser = UserManager.GetUserAsync(User).Result;
-    var userRoles = UserManager.GetRolesAsync(currentUser).Result;
-    var isStagiaire = userRoles.Contains("Stagiaire");
-    var isRH = userRoles.Contains("RH");
-}
-    @if (isRH)
+
+    // Use asynchronous operations
+    if (User.Identity != null && User.Identity.IsAuthenticated)
     {
+        var currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser != null)
+        {
+            var userRoles = await UserManager.GetRolesAsync(currentUser);
+            isStagiaire = userRoles.Contains("Stagiaire");
+            isAdmin = userRoles.Contains("Admin");
+            isRh = userRoles.Contains("RH");
 
-        <h1>Modifier une demande de stage</h1>
+        }
+    }
+}
 
-        <h4>Modifier les détails de la demande</h4>
-        <hr />
-        <div class="row">
-            <div class="col-md-4">
-                <form asp-action="Create" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Id" />
 
-                    <!-- Stagiaire -->
+
+<h1>Ajouter une nouvelle demande </h1>
+
+<div class="form-container">
+    <div class="stagiaire-card">
+
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Date_Demande" />
+            <div class="form-row">
+                <!-- Colonne 1 -->
+                <div class="form-column">
+                    @if (isRh || isAdmin)
+                        {
                     <div class="form-group">
                         <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
-                        <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.StagiaireId"></select>
+                        <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.Stagiaire"></select>
                         <span asp-validation-for="StagiaireId" class="text-danger"></span>
                     </div>
+                        }
+                    @if (isStagiaire)
+                    {
+                        <div class="form-group">
+                            <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
+                            <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.StagiaireId" ReadOnly ></select>
+                            <span asp-validation-for="StagiaireId" class="text-danger"></span>
+                        </div>
+                    }
 
-                    <!-- Statut -->
-                    <div class="form-group">
-                        <label asp-for="StatusId" class="control-label">Statut</label>
-                        <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
-                        <span asp-validation-for="StatusId" class="text-danger"></span>
-                    </div>
-
-                    <!-- Type de Stage -->
                     <div class="form-group">
                         <label asp-for="Type_StageId" class="control-label">Type de Stage</label>
                         <select asp-for="Type_StageId" class="form-control" asp-items="ViewBag.Type_StageId"></select>
                         <span asp-validation-for="Type_StageId" class="text-danger"></span>
                     </div>
 
-                    <!-- Dates -->
                     <div class="form-group">
                         <label asp-for="Date_Debut" class="control-label">Date de début</label>
                         <input asp-for="Date_Debut" class="form-control" type="date"
@@ -58,147 +74,160 @@
                                value="@(Model.Date_Fin == DateTime.MinValue ? "" : Model.Date_Fin.ToString("yyyy-MM-dd"))" />
                         <span asp-validation-for="Date_Fin" class="text-danger"></span>
                     </div>
+                </div>
 
-                    <!-- Télécharger les fichiers -->
+                <!-- Colonne 2 -->
+                <div class="form-column">
                     <div class="form-group">
-                        <label asp-for="Path_Demande_Stage" class="control-label">Fichier de la demande de stage</label>
+                        <label asp-for="Path_Demande_Stage" class="control-label">Fichier de la demande de stage </label><p style="color:indianred; font-size:small; display:inline"> (.pdf)</p>
                         <input asp-for="Path_Demande_Stage" class="form-control" type="file" />
                         <span asp-validation-for="Path_Demande_Stage" class="text-danger"></span>
                     </div>
 
-                    <!-- Département -->
-                    <div class="form-group">
-                        <label asp-for="DepartementId" class="control-label">Département</label>
-                        <select asp-for="DepartementId" class="form-control" asp-items="ViewBag.DepartementId"></select>
-                        <span asp-validation-for="DepartementId" class="text-danger"></span>
-                    </div>
 
-                    <!-- Encadrant -->
-                    <div class="form-group">
-                        <label asp-for="Encadrant" class="control-label">Encadrant</label>
-                        <input asp-for="Encadrant" class="form-control" />
-                        <span asp-validation-for="Encadrant" class="text-danger"></span>
-                    </div>
 
-                    <!-- Titre du Projet -->
-                    <div class="form-group">
-                        <label asp-for="Titre_Projet" class="control-label">Titre du Projet</label>
-                        <input asp-for="Titre_Projet" class="form-control" />
-                        <span asp-validation-for="Titre_Projet" class="text-danger"></span>
-                    </div>
-                <div class="form-group">
-                    <label asp-for="Path_Rapport" class="control-label">Rapport final</label>
-                    <input asp-for="Path_Rapport" class="form-control" type="file" />
-                    <span asp-validation-for="Path_Rapport" class="text-danger"></span>
-                </div>
-                <!-- Date de la Demande -->
-                <div class="form-group">
-                    <label asp-for="Date_Demande" class="control-label">Date de la demande</label>
-                    <input asp-for="Date_Demande" class="form-control"
-                           type="text" value="@(Model.Date_Demande == DateTime.MinValue ? "" : Model.Date_Demande.ToString("yyyy-MM-dd HH:mm"))" readonly />
-                </div>
-
-                    <!-- Commentaire -->
                     <div class="form-group">
                         <label asp-for="Commentaire" class="control-label">Commentaire</label>
                         <textarea asp-for="Commentaire" class="form-control">@Model.Commentaire</textarea>
                         <span asp-validation-for="Commentaire" class="text-danger"></span>
                     </div>
-
-                    <!-- Bouton de soumission -->
-                    <div class="form-group">
-                        <input type="submit" value="Sauvegarder
-     les modifications" class="btn btn-primary" />
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
 
-        <div>
-            <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
-        </div>
-
+            <div class="form-group text-center">
+                <input type="submit" value="Ajouter" class="btn btn-primary" />
+            </div>
+        </form>
         
-    }
-
-    @if (isStagiaire)
-{
-
-    <h1>Modifier une demande de stage</h1>
-
-    <h4>Modifier les détails de la demande</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Create" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-
-                <!-- Stagiaire -->
-                <div class="form-group">
-                    <label asp-for="StagiaireId" class="control-label">Stagiaire</label>
-                    <select asp-for="StagiaireId" class="form-control" asp-items="ViewBag.StagiaireId"></select>
-                    <span asp-validation-for="StagiaireId" class="text-danger"></span>
-                </div>
-
-                <!-- Type de Stage -->
-                <div class="form-group">
-                    <label asp-for="Type_StageId" class="control-label">Type de Stage</label>
-                    <select asp-for="Type_StageId" class="form-control" asp-items="ViewBag.Type_StageId"></select>
-                    <span asp-validation-for="Type_StageId" class="text-danger"></span>
-                </div>
-
-                <!-- Dates -->
-                <div class="form-group">
-                    <label asp-for="Date_Debut" class="control-label">Date de début</label>
-                    <input asp-for="Date_Debut" class="form-control" type="date"
-                           value="@(Model.Date_Debut == DateTime.MinValue ? "" : Model.Date_Debut.ToString("yyyy-MM-dd"))" />
-                    <span asp-validation-for="Date_Debut" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Date_Fin" class="control-label">Date de fin</label>
-                    <input asp-for="Date_Fin" class="form-control" type="date"
-                           value="@(Model.Date_Fin == DateTime.MinValue ? "" : Model.Date_Fin.ToString("yyyy-MM-dd"))" />
-                    <span asp-validation-for="Date_Fin" class="text-danger"></span>
-                </div>
-
-                <!-- Télécharger les fichiers -->
-                <div class="form-group">
-                    <label asp-for="Path_Demande_Stage" class="control-label">Fichier de la demande de stage</label>
-                    <input asp-for="Path_Demande_Stage" class="form-control" type="file" />
-                    <span asp-validation-for="Path_Demande_Stage" class="text-danger"></span>
-                </div>
-                <!-- Date de la Demande -->
-                <div class="form-group">
-                    <label asp-for="Date_Demande" class="control-label">Date de la demande</label>
-                    <input asp-for="Date_Demande" class="form-control"
-                           type="text" value="@(Model.Date_Demande == DateTime.MinValue ? "" : Model.Date_Demande.ToString("yyyy-MM-dd HH:mm"))" readonly />
-                </div>
-
-
-
-                <!-- Commentaire -->
-                <div class="form-group">
-                    <label asp-for="Commentaire" class="control-label">Commentaire</label>
-                    <textarea asp-for="Commentaire" class="form-control">@Model.Commentaire</textarea>
-                    <span asp-validation-for="Commentaire" class="text-danger"></span>
-                </div>
-
-                <!-- Bouton de soumission -->
-                <div class="form-group">
-                    <input type="submit" value="Sauvegarder les modifications" class="btn btn-primary" />
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div>
-        <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
-    </div>
-}
-
+</div>
+</div>
+<!-- Bouton retour -->
+<div class="back-button-wrapper text-center mt-4">
+    <a asp-action="Index" class="back-button">
+        <i class="fas fa-arrow-left"></i> Retour à l'accueil
+    </a>
+</div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
+
+
+    <style>
+        /* Conteneur principal centré */
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            margin: 40px auto;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+            .form-container:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            }
+
+        h1, h4 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            border-bottom: 3px solid #3498db;
+            display: inline-block;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Formulaire en 2 colonnes, horizontalement */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .form-column {
+            flex: 1;
+            min-width: 48%; /* Limite la taille des colonnes */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+            .form-control:focus {
+                border-color: #3498db;
+                box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+            }
+
+        label {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* Boutons */
+        .btn-primary {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background-color: #2980b9;
+                transform: scale(1.05);
+            }
+
+        .back-button-wrapper {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            color: white;
+            background-color: #7f8c8d;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: white;
+                color: #7f8c8d;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .back-button i {
+                margin-right: 8px;
+            }
+    </style>

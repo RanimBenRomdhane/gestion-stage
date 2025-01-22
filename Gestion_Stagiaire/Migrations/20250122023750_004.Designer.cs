@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gestion_Stagiaire.Data.Migrations
+namespace Gestion_Stagiaire.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250114135006_010")]
-    partial class _010
+    [Migration("20250122023750_004")]
+    partial class _004
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -131,9 +131,8 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Cin")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Cin")
+                        .HasColumnType("int");
 
                     b.Property<string>("Ecole")
                         .IsRequired()

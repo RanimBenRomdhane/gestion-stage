@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gestion_Stagiaire.Data.Migrations
+namespace Gestion_Stagiaire.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250111160118_006")]
-    partial class _006
+    [Migration("20250121101204_002")]
+    partial class _002
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,52 +25,10 @@ namespace Gestion_Stagiaire.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AffectationDepartement", b =>
-                {
-                    b.Property<Guid>("AffectationsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DepartementId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AffectationsId", "DepartementId");
-
-                    b.HasIndex("DepartementId");
-
-                    b.ToTable("AffectationDepartement");
-                });
-
-            modelBuilder.Entity("Gestion_Stagiaire.Models.Affectation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date_Affectation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("DemandeStageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Encadrant")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DemandeStageId")
-                        .IsUnique();
-
-                    b.ToTable("Affectations");
-                });
-
             modelBuilder.Entity("Gestion_Stagiaire.Models.DemandeStage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AffectationId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Commentaire")
@@ -85,6 +43,12 @@ namespace Gestion_Stagiaire.Data.Migrations
                     b.Property<DateTime>("Date_Fin")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("DepartementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Encadrant")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Path_Demande_Stage")
                         .HasColumnType("nvarchar(max)");
 
@@ -97,10 +61,15 @@ namespace Gestion_Stagiaire.Data.Migrations
                     b.Property<Guid?>("StatusId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Titre_Projet")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("Type_StageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartementId");
 
                     b.HasIndex("StagiaireId");
 
@@ -398,34 +367,13 @@ namespace Gestion_Stagiaire.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AffectationDepartement", b =>
-                {
-                    b.HasOne("Gestion_Stagiaire.Models.Affectation", null)
-                        .WithMany()
-                        .HasForeignKey("AffectationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gestion_Stagiaire.Models.Departement", null)
-                        .WithMany()
-                        .HasForeignKey("DepartementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Gestion_Stagiaire.Models.Affectation", b =>
-                {
-                    b.HasOne("Gestion_Stagiaire.Models.DemandeStage", "DemandeStage")
-                        .WithOne("Affectation")
-                        .HasForeignKey("Gestion_Stagiaire.Models.Affectation", "DemandeStageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DemandeStage");
-                });
-
             modelBuilder.Entity("Gestion_Stagiaire.Models.DemandeStage", b =>
                 {
+                    b.HasOne("Gestion_Stagiaire.Models.Departement", "Departement")
+                        .WithMany("DemandesStage")
+                        .HasForeignKey("DepartementId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Gestion_Stagiaires.Models.Stagiaire", "Stagiaire")
                         .WithMany("DemandesStage")
                         .HasForeignKey("StagiaireId")
@@ -442,6 +390,8 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .HasForeignKey("Type_StageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Departement");
 
                     b.Navigation("Stagiaire");
 
@@ -501,9 +451,9 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Gestion_Stagiaire.Models.DemandeStage", b =>
+            modelBuilder.Entity("Gestion_Stagiaire.Models.Departement", b =>
                 {
-                    b.Navigation("Affectation");
+                    b.Navigation("DemandesStage");
                 });
 
             modelBuilder.Entity("Gestion_Stagiaire.Models.Status", b =>

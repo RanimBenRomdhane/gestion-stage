@@ -11,6 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
@@ -35,13 +36,7 @@
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
 
-                    <!-- Remember Me Checkbox -->
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheckbox" />
-                        <label class="form-check-label" for="rememberMeCheckbox">
-                            Se souvenir de moi
-                        </label>
-                    </div>
+
 
                     <!-- Submit Button -->
                     <div>
@@ -50,14 +45,12 @@
                         </button>
                     </div>
 
-                    <!-- Additional Links -->
-                    <div class="text-center mt-4">
-                        <p>
-                            <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">Mot de passe oublié ?</a>
-                        </p>
-                        <p>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Créer un nouveau compte</a>
-                        </p>
+                    <!-- Google Login Link -->
+                    <div class="text-center mt-3">
+                        <a asp-controller="Account" asp-action="Login" class="google-login-link">
+                            <i class="fab fa-google"></i> Connexion avec Google
+                        </a>
+
                     </div>
                 </form>
             </section>
@@ -65,8 +58,10 @@
     </div>
 
     @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
+            <partial name="_ValidationScriptsPartial" />
     }
+</body>
+</html>
 
     <!-- CSS à la fin du fichier -->
     <style>
@@ -74,8 +69,6 @@
         html {
             font-size: 14px;
         }
-
-
 
         body {
             margin: 0;
@@ -116,11 +109,9 @@
             transition: transform 0.5s ease;
         }
 
-            .form-container:hover {
-                transform: translateY(-10px);
-            }
-
-
+        .form-container:hover {
+            transform: translateY(-10px);
+        }
 
         /* Title styling */
         .title-text {
@@ -140,10 +131,10 @@
             color: darkgray;
         }
 
-            .custom-input:hover {
-                background-color: #f5f5f5;
-                border: 1px solid #3498db;
-            }
+        .custom-input:hover {
+            background-color: #f5f5f5;
+            border: 1px solid #3498db;
+        }
 
         /* Button styles */
         .custom-btn {
@@ -155,11 +146,33 @@
             padding: 12px 0;
         }
 
-            .custom-btn:hover {
-                transform: scale(1.1);
-                background-color: #c0392b;
-                color: #fff;
-            }
+        .custom-btn:hover {
+            transform: scale(1.1);
+            background-color: #c0392b;
+            color: #fff;
+        }
+
+        /* Google login link styles */
+        .google-login-link {
+            color: indianred;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 50px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+        .google-login-link:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.1);
+        }
+
+        .google-login-link i {
+            margin-right: 8px;
+        }
 
         /* Links */
         a {
@@ -167,45 +180,15 @@
             transition: color 0.3s ease;
         }
 
-            a:hover {
-                color: #e74c3c;
-            }
+        a:hover {
+            color: #e74c3c;
+        }
 
         /* Validation error text */
         .text-danger {
             color: #e74c3c;
         }
 
-        /* Navbar styles */
-        .navbar {
-            background-color: #2c3e50 !important;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-            .navbar .navbar-brand, .navbar .nav-link {
-                color: #fff !important;
-            }
-
-                .navbar .nav-link:hover {
-                    color: #ecf0f1 !important;
-                }
-
-        /* Footer styling */
-        footer {
-            background-color: #2c3e50;
-            color: #fff;
-            padding: 15px 0;
-            text-align: center;
-        }
-
-            footer a {
-                color: #3498db;
-            }
-
-                footer a:hover {
-                    color: #ecf0f1;
-                    text-decoration: underline;
-                }
         /* Modifier la couleur de la case à cocher */
         .form-check-input:checked {
             background-color: red;
@@ -218,9 +201,8 @@
         }
 
         .form-check-label {
-            color: #333; /* Couleur du texte */
+            color: #333;
         }
 
     </style>
-</body>
-</html>
+

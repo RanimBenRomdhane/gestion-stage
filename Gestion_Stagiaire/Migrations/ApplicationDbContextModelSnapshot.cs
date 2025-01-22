@@ -4,19 +4,16 @@ using Gestion_Stagiaire.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gestion_Stagiaire.Data.Migrations
+namespace Gestion_Stagiaire.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250113095130_007")]
-    partial class _007
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +44,6 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Encadrant")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Path_Demande_Stage")
@@ -61,6 +57,9 @@ namespace Gestion_Stagiaire.Data.Migrations
 
                     b.Property<Guid?>("StatusId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Titre_Projet")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("Type_StageId")
                         .HasColumnType("uniqueidentifier");
@@ -129,9 +128,8 @@ namespace Gestion_Stagiaire.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Cin")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Cin")
+                        .HasColumnType("int");
 
                     b.Property<string>("Ecole")
                         .IsRequired()

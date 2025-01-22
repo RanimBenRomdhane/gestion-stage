@@ -4,78 +4,180 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="page-title">Détails </h1>
 
-<div>
-    <h4>Stagiaire</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            Photo
-        </dt>
-        <dd class="col-sm-10">
-            @if (!string.IsNullOrEmpty(Model.Path_Photo))
-            {
-                <img src="~/uploads/photos/@Model.Path_Photo" alt="Photo de @Model.Nom" style="max-width: 50px; max-height: 50px;" />
-            }
-            else
-            {
-                <p>Aucune photo disponible</p>
-            }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nom)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nom)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Prenom)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Prenom)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Cin)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Cin)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Telephone)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Telephone)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Ecole)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Ecole)
-        </dd>
-       
-        <dt class="col-sm-2">
-            CV
-        </dt>
-        <dd class="col-sm-10">
-            @if (!string.IsNullOrEmpty(Model.Path_CV))
-            {
-                <a href="~/uploads/cvs/@Model.Path_CV" target="_blank">Voir le CV</a>
-            }
-            else
-            {
-                <p>Aucun CV disponible</p>
-            }
-        </dd>
-    </dl>
+<div class="stagiaire-container">
+    <div class="stagiaire-card">
+        <!-- Photo dans le coin gauche -->
+        @if (!string.IsNullOrEmpty(Model.Path_Photo))
+        {
+            <img src="~/uploads/photos/@Model.Path_Photo?timestamp=@DateTime.Now.Ticks" alt="Photo de @Model.Nom"
+                 class="stagiaire-photo" />
+        }
+        else
+        {
+            <div class="stagiaire-photo placeholder-photo text-center d-flex align-items-center justify-content-center bg-light">
+                <i class="fas fa-user-circle fa-3x text-secondary"></i>
+            </div>
+        }
+
+        <!-- Contenu à droite -->
+        <div class="card-body">
+            <h5 class="card-title">@Model.Nom @Model.Prenom</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>CIN:</strong> @Model.Cin</li>
+                <li class="list-group-item"><strong>Téléphone:</strong> @Model.Telephone</li>
+                <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
+                <li class="list-group-item"><strong>École:</strong> @Model.Ecole</li>
+                <li class="list-group-item">
+                    <strong>CV:</strong>
+                    @if (!string.IsNullOrEmpty(Model.Path_CV))
+                    {
+                        <a href="~/uploads/cvs/@Model.Path_CV?timestamp=@DateTime.Now.Ticks" target="_blank">Voir le CV</a>
+                    }
+                    else
+                    {
+                        <span>Aucun CV disponible</span>
+                    }
+                </li>
+            </ul>
+        </div>
+
+        <!-- Bouton Modifier -->
+        <a asp-action="Edit" asp-route-id="@Model.Id" id="edit-icon2" title="Modifier">
+            <i class="fas fa-edit"></i>
+        </a>
+    </div>
+    <div class="back-button-wrapper">
+        <a asp-action="Index" class="back-button">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .stagiaire-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 30px;
+        padding: 40px;
+        min-height: 100vh;
+    }
+
+    .stagiaire-card {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        min-width: 700px;
+        max-width: fit-content;
+        border-radius: 15px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        height: auto;
+    }
+
+    #edit-icon2 {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-size: 1.5rem;
+        color: #007bff;
+        z-index: 10;
+    }
+
+        #edit-icon2:hover {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+    .stagiaire-photo {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-right: 20px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 2;
+    }
+
+    .stagiaire-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-body {
+        flex: 1;
+        margin-left: 180px;
+        font-size: 1.1rem;
+    }
+
+    .card-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+        text-transform: capitalize;
+    }
+
+    .list-group-item {
+        font-size: 1.2rem;
+        color: #555;
+        border: none;
+        padding: 8px 0;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db;
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .back-button-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: -100px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: white;
+        background-color: #7f8c8d;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .back-button:hover {
+            background-color: white;
+            color: #7f8c8d;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+</style>

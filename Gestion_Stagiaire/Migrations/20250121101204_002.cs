@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace Gestion_Stagiaire.Data.Migrations
+namespace Gestion_Stagiaire.Migrations
 {
     /// <inheritdoc />
-    public partial class _006 : Migration
+    public partial class _002 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

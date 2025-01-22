@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Gestion_Stagiaire.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
 
 
 </head>
@@ -26,27 +30,60 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Accueil</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i> <!-- Icône de maison -->
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="https://www.wicmicgroup.com/">À Propos</a>
+                            <a class="nav-link text-dark" href="https://www.wicmicgroup.com/" >À Propos</a>
                         </li>
+
+                        @if (User.IsInRole("Admin") )
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Type_Stage" asp-action="Index">Type stage</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Departements" asp-action="Index">Département</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Status" asp-action="Index">Statut</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/AdminRegister">Ajouter Utilisateurs</a>
+
+                            </li>
+                        }
+                        @if (User.IsInRole("Rh"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Stagiaire"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index" >Mon Profil</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index" >Mes Demandes </a>
+                            </li>
+
+                        }
+
                        
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Type_Stage" asp-action="Index">Type des stages</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Departements" asp-action="Index">Departement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Status" asp-action="Index">Statut</a>
-                        </li>
+
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -59,30 +96,25 @@
             @RenderBody()
         </main>
     </div>
-
-<!-- Footer -->
 <footer class="footer bg-dark text-light py-5">
     <div class="container">
-        <div class="row align-items-center">
-            <!-- Logo et nom de l'entreprise -->
-            <div class="col-md-4 text-center text-md-start mb-4 mb-md-0">
+        <!-- Première rangée : Informations principales -->
+        <div class="row">
+            <div class="col-lg-4 text-center text-lg-start mb-4">
                 <img src="~/images/image1.png" alt="Logo" class="img-fluid mb-3" style="max-width: 150px;">
-                <h5 class="text-uppercase">WicMic</h5>
-                <p>Washing and Manufacturing International Company</p>
+               
             </div>
-
-            <!-- Informations sur l'entreprise -->
-            <div class="col-md-4 mb-4 mb-md-0">
-                <h5 class="text-uppercase mb-3">Informations de contact</h5>
-                <p><i class="fas fa-map-marker-alt"></i> Route de Metline 7070 Rasjebel Bizerte</p>
-                <p><i class="fas fa-phone"></i> Téléphone : +216 72 456 026</p>
-                <p><i class="fas fa-envelope"></i> Email : <a href="mailto:contact@wic-sa.com" class="text-warning">contact@wic-sa.com</a></p>
+            <div class="col-lg-4 text-center mb-4">
+                <h5 class="text-uppercase mb-3">Contact</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-map-marker-alt"></i> Route de Metline, 7070 Ras Jebel, Bizerte</li>
+                    <li><i class="fas fa-phone"></i> +216 72 456 026</li>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:contact@wic-sa.com" class="text-warning">contact@wic-sa.com</a></li>
+                </ul>
             </div>
-
-            <!-- Réseaux sociaux et liens rapides -->
-            <div class="col-md-4 text-center text-md-end">
+            <div class="col-lg-4 text-center text-lg-end mb-4">
                 <h5 class="text-uppercase mb-3">Suivez-nous</h5>
-                <div class="d-flex justify-content-center justify-content-md-end">
+                <div class="d-flex justify-content-center justify-content-lg-end">
                     <a href="https://www.facebook.com/wicmicgroup" target="_blank" class="text-light mx-2">
                         <i class="fab fa-facebook-f fa-2x"></i>
                     </a>
@@ -93,19 +125,29 @@
                         <i class="fab fa-linkedin fa-2x"></i>
                     </a>
                 </div>
-                <ul class="list-unstyled mt-3">
-                    <li><a href="/internships" class="text-light">Explorer les Stages</a></li>
-                    <li><a href="/admin" class="text-light">Gérer les Stages</a></li>
-                    <li><a href="/register" class="text-light">S'inscrire</a></li>
-                    <li><a href="/privacy" class="text-light">Politique de confidentialité</a></li>
-                </ul>
             </div>
         </div>
 
-        <div class="text-center mt-4">
-            <p>&copy; 2025 - WicMic - Tous droits réservés.</p>
+        <!-- Deuxième rangée : Liens rapides -->
+        <div class="row border-top pt-4 mt-4">
+            <div class="col-md-6 text-center text-md-start mb-3">
+                <h5 class="text-uppercase">Liens rapides</h5>
+                <ul class="list-inline">
+                        <li class="list-inline-item"><a class="text-light" asp-area="" asp-controller="DemandeStages" asp-action="Index">Gérer les Demandes</a></li>
+                        <li class="list-inline-item"><a class="text-light" href="https://www.wicmicgroup.com/">À Propos</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Troisième rangée : Copyright -->
+        <div class="row mt-4">
+            <div class="col text-center">
+                <small>&copy; 2025 WicMic - Tous droits réservés.</small>
+            </div>
         </div>
     </div>
+
 </footer>
 
 
