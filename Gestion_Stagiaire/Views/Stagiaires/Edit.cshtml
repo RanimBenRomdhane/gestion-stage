@@ -2,8 +2,7 @@
 @{
     ViewData["Title"] = "Modifier un Stagiaire";
 }
-<head><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-</head>
+
 <h1 class="page-title">Modifier un Stagiaire</h1>
 
 <div class="stagiaire-container">
@@ -53,13 +52,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Path_Photo" class="control-label label-bold">Photo</label>
+                        <label asp-for="Path_Photo" class="control-label label-bold">Photo</label><p style="color:indianred; font-size:small; display:inline"> (.png)</p>
                         <input asp-for="Path_Photo" class="form-control form-control-custom" type="file" />
                         <span asp-validation-for="Path_Photo" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Path_CV" class="control-label label-bold">CV</label>
+                        <label asp-for="Path_CV" class="control-label label-bold">CV</label><p style="color:indianred; font-size:small; display:inline"> (.pdf)</p>
                         <input asp-for="Path_CV" class="form-control form-control-custom" type="file" />
                         <span asp-validation-for="Path_CV" class="text-danger"></span>
                     </div>

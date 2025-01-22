@@ -128,9 +128,8 @@ namespace Gestion_Stagiaire.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Cin")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Cin")
+                        .HasColumnType("int");
 
                     b.Property<string>("Ecole")
                         .IsRequired()

@@ -45,21 +45,13 @@ body {
 .text-danger {
     color: #e74c3c;
 }
-
-/* Navbar styles */
 .navbar {
     background-color: #2c3e50 !important; /* Bleu nuit */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
-    
-    
+    font-family: Arial, sans-serif;
+    font-weight: bold; /* Texte gras */
+    font-size: 1.1rem; /* Taille de police */
 }
-    .navbar .nav-link.active {
-        color: lightseagreen !important; /* Couleur pour l'élément actif */
-        font-weight: bold; /* Gras pour mettre en valeur */
-        text-decoration: underline; /* Optionnel, pour accentuer davantage */
-        font-family: Arial, sans-serif;
-    }
 
 
     .navbar .navbar-brand, .navbar .nav-link {
@@ -69,8 +61,12 @@ body {
     }
 
         .navbar .nav-link:hover {
-            color: lightseagreen !important;
+            color: lightseagreen !important; /* Couleur au survol */
+            font-size: 1rem; /* Taille de police */
         }
+
+
+.logout{}
 .container {
     display: grid;
     min-height: 75vh !important;

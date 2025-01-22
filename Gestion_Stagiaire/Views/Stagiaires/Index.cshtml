@@ -16,418 +16,425 @@
     var userRoles = UserManager.GetRolesAsync(currentUser).Result;
     var isStagiaire = userRoles.Contains("Stagiaire");
 }
-<head><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 
 
-@if (isStagiaire){
+@if (isStagiaire)
+{
 
-<h1 class="page-title">Mon Profil</h1>
-            <!-- Affichage pour les stagiaires -->
-            <div class="container stagiaire-container">
+    <h1 class="page-title">Mon Profil</h1>
+    <!-- Affichage pour les stagiaires -->
+    <div class="container stagiaire-container">
         @foreach (var item in Model)
         {
-                            <div class="stagiaire-card">
-                                <!-- Photo dans le coin gauche -->
+            <div class="stagiaire-card">
+                <!-- Photo dans le coin gauche -->
                 @if (!string.IsNullOrEmpty(item.Path_Photo))
                 {
-                            <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks"  alt="Photo de @item.Nom" 
-                                 class="stagiaire-photo" />
+                    <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks" alt="Photo de @item.Nom"
+                         class="stagiaire-photo" />
 
                 }
                 else
                 {
-                                            <div class="stagiaire-photo placeholder-photo text-center d-flex align-items-center justify-content-center bg-light">
-                                                <i class="fas fa-user-circle fa-3x text-secondary"></i>
-                                            </div>
+                    <div class="stagiaire-photo placeholder-photo text-center d-flex align-items-center justify-content-center bg-light">
+                        <i class="fas fa-user-circle fa-3x text-secondary"></i>
+                    </div>
                 }
 
-                                <!-- Contenu à droite -->
-                                <div class="card-body">
-                                    <h5 class="card-title">@item.Nom @item.Prenom</h5>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item"><strong>CIN:</strong> @item.Cin</li>
-                                        <li class="list-group-item"><strong>Téléphone:</strong> @item.Telephone</li>
-                                        <li class="list-group-item"><strong>Email:</strong> @item.Email</li>
-                                        <li class="list-group-item"><strong>École:</strong> @item.Ecole</li>
-                                        
-                                        <li class="list-group-item"><strong>CV:</strong> 
-                                            @if (!string.IsNullOrEmpty(item.Path_CV))
-                                            {
-                                                            <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks" target="_blank">Consulter le CV</a>
-                                            }
-                                            else
-                                            {
-                                                <span>Aucun CV disponible</span>
-                                            }
-</li>
+                <!-- Contenu à droite -->
+                <div class="card-body">
+                    <h5 class="card-title">@item.Nom @item.Prenom</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>CIN:</strong> @item.Cin</li>
+                        <li class="list-group-item"><strong>Téléphone:</strong> @item.Telephone</li>
+                        <li class="list-group-item"><strong>Email:</strong> @item.Email</li>
+                        <li class="list-group-item"><strong>École:</strong> @item.Ecole</li>
+
+                        <li class="list-group-item">
+                            <strong>CV:</strong>
+                            @if (!string.IsNullOrEmpty(item.Path_CV))
+                            {
+                                <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks" target="_blank">Consulter le CV</a>
+                            }
+                            else
+                            {
+                                <span>Aucun CV disponible</span>
+                            }
+                        </li>
 
 
-                                    </ul>
-                                </div>
+                    </ul>
+                </div>
 
-                                <!-- Bouton Modifier -->
+                <!-- Bouton Modifier -->
 
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon"  title="Modifier">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </div>
-    <div class="back-button-wrapper">
-    <a asp-action="Index" asp-controller="Home" class="back-button">
-                <i class="fas fa-arrow-left"></i> Retour à l'accueil
-    </a>
-</div>
-        }
+                <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon4" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                </a>
             </div>
+            <div class="back-button-wrapper">
+                <a asp-action="Index" asp-controller="Home" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Retour à l'accueil
+                </a>
+            </div>
+        }
+    </div>
 }
 else
 {
     <h1 class="page-title">Gestion des Stagiaires</h1>
-          <p class="action-buttons">
-    <a asp-action="ExportToExcel" class="btn btn-success btn-action">
-        <i class="fas fa-file-excel"></i> Exporter en Excel
-    </a>
-    <a asp-action="Create" class="btn btn-primary btn-action">
-        <i class="fas fa-plus"></i> Ajouter un stagiaire
-    </a>
-</p>
+    <p class="action-buttons">
+        <a asp-action="ExportToExcel" class="btn btn-success btn-action">
+            <i class="fas fa-file-excel"></i> Exporter en Excel
+        </a>
+        <a asp-action="Create" class="btn btn-primary btn-action">
+            <i class="fas fa-plus"></i> Ajouter un stagiaire
+        </a>
+    </p>
 
-<!-- Barre de recherche -->
-<form method="get"  class="search-bar" action="@Url.Action("Index")">
-    <div class="input-group">
-        <input type="text" id="searchInput" class="form-control" placeholder="Rechercher..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
-        <span class="input-group-text">
-            <i class="fas fa-search"></i>
-        </span>
-    </div>
-</form>
+    <!-- Barre de recherche -->
+    <form method="get" class="search-bar" action="@Url.Action("Index")">
+        <div class="input-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
+            <span class="input-group-text">
+                <i class="fas fa-search"></i>
+            </span>
+        </div>
+    </form>
 
-<table class="table table-hover table-stagiaires" id="stagiairesTable">
-    <thead class="table-dark">
-        <tr>
-            <th>Photo</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>CIN</th>
-            <th>Téléphone</th>
-            <th>Email</th>
-            <th>École</th>
-            <th>CV</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table table-hover table-stagiaires" id="stagiairesTable">
+        <thead class="table-dark">
             <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.Path_Photo))
-                    {
-                                    <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks" alt="Photo de @item.Nom" class="rounded-circle photo-table" />
-                    }
-                    else
-                    {
-                        <p>Aucune photo</p>
-                    }
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.Nom)</td>
-                <td>@Html.DisplayFor(modelItem => item.Prenom)</td>
-                <td>@Html.DisplayFor(modelItem => item.Cin)</td>
-                <td>@Html.DisplayFor(modelItem => item.Telephone)</td>
-                <td class="mail">@Html.DisplayFor(modelItem => item.Email)</td>
-                <td>@Html.DisplayFor(modelItem => item.Ecole)</td>
-                               <td>@if (!string.IsNullOrEmpty(item.Path_CV))
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>CIN</th>
+                <th>Téléphone</th>
+                <th>Email</th>
+                <th>École</th>
+                <th>CV</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Path_Photo))
                         {
-                <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks" 
-                   target="_blank" 
-                   class="btn btn-primary btn-sm voir-btn">
-                    Voir
-                </a>
+                            <img src="~/uploads/photos/@item.Path_Photo?timestamp=@DateTime.Now.Ticks" alt="Photo de @item.Nom" class="rounded-circle photo-table" />
+                        }
+                        else
+                        {
+                            <p>Aucune photo</p>
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Nom)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Prenom)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Cin)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Telephone)</td>
+                    <td class="mail">@Html.DisplayFor(modelItem => item.Email)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Ecole)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Path_CV))
+                        {
+                            <a href="~/uploads/cvs/@item.Path_CV?timestamp=@DateTime.Now.Ticks"
+                               target="_blank"
+                               class="btn btn-primary btn-sm voir-btn">
+                                Voir
+                            </a>
                         }
 
-        </td>
+                    </td>
 
-                       <td class="action-icons">
-            <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon2" title="Modifier">
-                <i class="fas fa-edit"></i>
-            </a>
-            <a asp-action="Details" asp-route-id="@item.Id" class="details-icon2" title="Détails">
-                <i class="fas fa-info-circle"></i>
-            </a>
+                    <td class="action-icons">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon2" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="details-icon2" title="Détails">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
                         @if (userRoles.Contains("Admin"))
                         {
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="delete-icon2" title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                    </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="delete-icon2" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         }
-        </td>
+                    </td>
 
-            </tr>
-        }
-    </tbody>
-</table>
-<!-- Pagination -->
-<div class="pagination-container">
-    <ul class="pagination">
-        @if (Model.HasPreviousPage)
-        {
-            <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1, searchString = ViewData["CurrentFilter"] })" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                <span class="page-link">&laquo;</span>
-            </li>
-        }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <ul class="pagination">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1, searchString = ViewData["CurrentFilter"] })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            }
 
-        @for (var i = 1; i <= Model.PageCount; i++)
-        {
-            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = i, searchString = ViewData["CurrentFilter"] })">@i</a>
-            </li>
-        }
+            @for (var i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, searchString = ViewData["CurrentFilter"] })">@i</a>
+                </li>
+            }
 
-        @if (Model.HasNextPage)
-        {
-            <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1, searchString = ViewData["CurrentFilter"] })" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                <span class="page-link">&raquo;</span>
-            </li>
-        }
-    </ul>
-</div>
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1, searchString = ViewData["CurrentFilter"] })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            }
+        </ul>
+    </div>
 }
 
 @section Scripts {
-            <script>
-                function filterResults() {
-                    var input = document.getElementById('searchInput');
-                    var filter = input.value.toLowerCase();
-                    var table = document.getElementById('stagiairesTable');
-                    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    <script>
+        function filterResults() {
+            var input = document.getElementById('searchInput');
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById('stagiairesTable');
+            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
-                    for (var i = 0; i < rows.length; i++) {
-                        var cells = rows[i].getElementsByTagName('td');
-                        var match = false;
-                        for (var j = 0; j < cells.length; j++) {
-                            if (cells[j].textContent.toLowerCase().includes(filter)) {
-                                match = true;
-                                break;
-                            }
-                        }
-                        rows[i].style.display = match ? '' : 'none';
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var match = false;
+                for (var j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
                     }
                 }
-            </script>
-            <style>
-                .stagiaire-container {
-                    display: flex;
-                    justify-content: center;
-                    align-items: flex-start;
-                    flex-wrap: wrap;
-                    gap: 30px;
-                    padding: 40px;
-                   /* background-color: #f5f5f5;*/
-                    min-height: 100vh;
-                }
-
-                    .stagiaire-card {
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        min-width: 700px; /* Largeur minimale */
-        max-width: fit-content; /* S'adapte à la largeur du contenu */
-        border-radius: 15px;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        padding: 20px;
-        height: 400px; /* Ajuste la hauteur en fonction du contenu */
-    }
-
-
-                .stagiaire-card:hover {
-                    transform: translateY(-10px);
-                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-                }
-
-                .stagiaire-photo {
-                    width: 150px;
-                    height: 150px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    margin-right: 20px;
-                    position: absolute;
-                    top: 10px;
-                    left: 10px;
-                }
-
-                .card-body {
-    flex: 1;
-    margin-left: 180px;
-    font-size: 1.1rem; /* Augmenter la taille de police pour plus de lisibilité */
-}
-    .card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-        .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                rows[i].style.display = match ? '' : 'none';
+            }
+        }
+    </script>
+    <style>
+        .stagiaire-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 40px;
+            /* background-color: #f5f5f5;*/
+            min-height: 100vh;
         }
 
+        .stagiaire-card {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            min-width: 700px; /* Largeur minimale */
+            max-width: fit-content; /* S'adapte à la largeur du contenu */
+            border-radius: 15px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            padding: 20px;
+            height: 400px; /* Ajuste la hauteur en fonction du contenu */
+        }
+
+
+            .stagiaire-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            }
+
+        .stagiaire-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 20px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .card-body {
+            flex: 1;
+            margin-left: 180px;
+            font-size: 1.1rem; /* Augmenter la taille de police pour plus de lisibilité */
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+            .card:hover {
+                transform: scale(1.03);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+
         /* Interaction sur les éléments de la liste */
-    .list-group-item {
-        transition: background-color 0.3s ease-in-out;
-    }
+        .list-group-item {
+            transition: background-color 0.3s ease-in-out;
+        }
 
 
 
-.card-title {
-    font-size: 2rem; /* Augmenter la taille du titre */
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 15px;
-}
+        .card-title {
+            font-size: 2rem; /* Augmenter la taille du titre */
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
 
-    .list-group-item {
-        font-size: 1.2rem; /* Augmenter la taille des éléments de la liste */
-        color: #555;
-        border: none;
-        padding: 8px 0; /* Augmenter le padding pour plus d'espace */
-    }
+        .list-group-item {
+            font-size: 1.2rem; /* Augmenter la taille des éléments de la liste */
+            color: #555;
+            border: none;
+            padding: 8px 0; /* Augmenter le padding pour plus d'espace */
+        }
 
 
-                    .page-title {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #2c3e50; /* Dark, elegant blue-gray */
-        text-align: center;
-        margin-bottom: 20px;
-        border-bottom: 3px solid #3498db; /* Underline with a modern blue */
-        display: inline-block;
-        padding-bottom: 10px;
-        text-transform: uppercase; /* Optional: Make text all uppercase */
-        letter-spacing: 1px; /* Slightly increase spacing for a cleaner look */
-    }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50; /* Dark, elegant blue-gray */
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db; /* Underline with a modern blue */
+            display: inline-block;
+            padding-bottom: 10px;
+            text-transform: uppercase; /* Optional: Make text all uppercase */
+            letter-spacing: 1px; /* Slightly increase spacing for a cleaner look */
+        }
+
         .action-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
 
-    .btn-action {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-weight: bold;
-    }
+        .btn-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+        }
 
-    .search-bar .input-group {
-        max-width: 400px;
-        margin-bottom: 15px;
-    }
+        .search-bar .input-group {
+            max-width: 400px;
+            margin-bottom: 15px;
+        }
 
-    .photo-table {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-    }
+        .photo-table {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
 
-    .table-stagiaires tr:hover {
-        background-color: #f9f9f9;
-        transition: background-color 0.3s ease-in-out;
-    }
+        .table-stagiaires tr:hover {
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease-in-out;
+        }
 
         /* Responsive and animations */
-    .table-stagiaires {
-        animation: fadeIn 0.5s ease-in-out;
-    }
-    .edit-icon2 i {
-        color: #007bff;
-        transition: color 0.3s ease;
-    }
+        .table-stagiaires {
+            animation: fadeIn 0.5s ease-in-out;
+        }
 
-    .edit-icon2 i:hover {
-        color: #0056b3;
-    }
+        .edit-icon2 i {
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
 
-    .details-icon2 i {
-        color: gray;
-        transition: color 0.3s ease;
-    }
+            .edit-icon2 i:hover {
+                color: #0056b3;
+            }
 
-    .details-icon2 i:hover {
-        color: #6c757d;
-    }
+        .details-icon2 i {
+            color: gray;
+            transition: color 0.3s ease;
+        }
 
-    .delete-icon2 i {
-        color: indianred;
-        transition: color 0.3s ease;
-    }
+            .details-icon2 i:hover {
+                color: #6c757d;
+            }
 
-    .delete-icon2 i:hover {
-        color: darkred;
-    }
-                .action-icons a {
-                text-decoration: none;
-                font-size: 20px;
-               
-                transition: color 0.3s;}
+        .delete-icon2 i {
+            color: indianred;
+            transition: color 0.3s ease;
+        }
+
+            .delete-icon2 i:hover {
+                color: darkred;
+            }
+
+        .action-icons a {
+            text-decoration: none;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
 
         .voir-btn {
-        background-color: #3498db; /* Couleur de fond bleu */
-        color: white; /* Texte blanc */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+            background-color: #3498db; /* Couleur de fond bleu */
+            color: white; /* Texte blanc */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    .voir-btn:hover {
-        background-color: #2980b9; /* Couleur bleu plus foncée au survol */
-    }
+            .voir-btn:hover {
+                background-color: #2980b9; /* Couleur bleu plus foncée au survol */
+            }
 
         .mail a {
-        color: black /* Nouvelle couleur pour le lien email */
-        text-decoration: none;
-        
-    }
+            color: black /* Nouvelle couleur pour le lien email */
+            text-decoration: none;
+        }
 
-              /* Bouton Retour */
-            .back-button-wrapper {
-                width: 100%; /* Prend toute la largeur disponible */
-                display: flex;
-                justify-content: center;
-                margin-top: -10px;
-            }
+        /* Bouton Retour */
+        .back-button-wrapper {
+            width: 100%; /* Prend toute la largeur disponible */
+            display: flex;
+            justify-content: center;
+            margin-top: -10px;
+        }
 
-            .back-button {
-                display: inline-flex;
-                align-items: center;
-                padding: 10px 20px;
-                font-size: 1rem;
-                color: white;
-                background-color: #7f8c8d;
-                border-radius: 50px;
-                text-decoration: none;
-                transition: all 0.3s ease;
-            }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #7f8c8d;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
 
             .back-button:hover {
                 background-color: white;
@@ -440,53 +447,70 @@ else
                 margin-right: 8px;
             }
 
-                .pagination-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 15px;
-    }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
 
-    .pagination {
-        list-style-type: none;
-        padding: 0;
-        display: flex;
-        gap: 3px;
-    }
+        .pagination {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            gap: 3px;
+        }
 
-    .pagination .page-item {
-        margin: 0;
-    }
+            .pagination .page-item {
+                margin: 0;
+            }
 
-    .pagination .page-item.disabled .page-link {
-        color: #ddd;
-        pointer-events: none;
-    }
+                .pagination .page-item.disabled .page-link {
+                    color: #ddd;
+                    pointer-events: none;
+                }
 
-    .pagination .page-item.active .page-link {
-        background-color: #6c757d;
-        color: white;
-    }
+                .pagination .page-item.active .page-link {
+                    background-color: #6c757d;
+                    color: white;
+                }
 
-    .pagination .page-link {
-        padding: 5px 10px; /* Boutons plus petits */
-        border-radius: 3px; /* Coins arrondis */
-        color: #6c757d; /* Gris pour les boutons */
-        text-decoration: none;
-        border: 1px solid #6c757d;
-        font-size: 12px; /* Texte plus petit */
-    }
+            .pagination .page-link {
+                padding: 5px 10px; /* Boutons plus petits */
+                border-radius: 3px; /* Coins arrondis */
+                color: #6c757d; /* Gris pour les boutons */
+                text-decoration: none;
+                border: 1px solid #6c757d;
+                font-size: 12px; /* Texte plus petit */
+            }
 
-    .pagination .page-link:hover {
-        background-color: #5a6268; /* Couleur de survol plus foncée */
-        color: white;
-        border-color: #5a6268; /* Bordure survolée */
-    }
+                .pagination .page-link:hover {
+                    background-color: #5a6268; /* Couleur de survol plus foncée */
+                    color: white;
+                    border-color: #5a6268; /* Bordure survolée */
+                }
 
-    .pagination .page-link:focus {
-        outline: none; /* Supprime le contour par défaut du focus */
-        box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5); /* Ajout d'un léger effet de focus */
-    }
+                .pagination .page-link:focus {
+                    outline: none; /* Supprime le contour par défaut du focus */
+                    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5); /* Ajout d'un léger effet de focus */
+                }
 
+        .edit-icon4 {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.5rem;
+            color: #007bff;
+            z-index: 10;
+        }
 
-            </style>
+            .edit-icon4:hover {
+                background-color: #007bff;
+                color: white;
+                cursor: pointer;
+            }
+    </style>
 }

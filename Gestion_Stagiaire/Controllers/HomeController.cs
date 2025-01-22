@@ -5,8 +5,9 @@ using System.Diagnostics;
 
 namespace Gestion_Stagiaire.Controllers
 {
-  //  [Authorize]
+
     public class HomeController : Controller
+
     {
         private readonly ILogger<HomeController> _logger;
 

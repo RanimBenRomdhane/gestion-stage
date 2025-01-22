@@ -36,29 +36,13 @@
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
 
-                    <!-- Remember Me Checkbox -->
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" asp-for="Input.RememberMe" id="rememberMeCheckbox" />
-                        <label class="form-check-label" for="rememberMeCheckbox">
-                            Se souvenir de moi
-                        </label>
-                    </div>
+
 
                     <!-- Submit Button -->
                     <div>
                         <button id="login-submit" type="submit" class="w-100 btn btn-lg custom-btn">
                             Se connecter
                         </button>
-                    </div>
-
-                    <!-- Additional Links -->
-                    <div class="text-center mt-4">
-                        <p>
-                            <a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">Mot de passe oublié ?</a>
-                        </p>
-                        <p>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Créer un nouveau compte</a>
-                        </p>
                     </div>
 
                     <!-- Google Login Link -->
@@ -178,11 +162,12 @@
             font-weight: bold;
             padding: 12px;
             border-radius: 50px;
-            transition: background-color 0.3s ease;
-        }
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
 
         .google-login-link:hover {
             background-color: #f1f1f1;
+            transform: scale(1.1);
         }
 
         .google-login-link i {

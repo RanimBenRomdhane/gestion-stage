@@ -33,6 +33,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
+
 .AddCookie()  // Cookie authentication for local sign-ins
 
 .AddGoogle(options =>
@@ -41,7 +42,7 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     options.CallbackPath = "/signin-google"; // The callback URL that Google will redirect to
     options.ClaimActions.MapJsonKey(ClaimTypes.Role, "roles"); // Map roles from Google to the ClaimsPrincipal
-});
+   });
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -65,6 +66,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 app.MapRazorPages();
 
 app.Run();

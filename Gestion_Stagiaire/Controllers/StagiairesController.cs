@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Gestion_Stagiaires.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using X.PagedList;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 
 namespace Gestion_Stagiaire.Controllers
@@ -28,28 +30,36 @@ namespace Gestion_Stagiaire.Controllers
 
         public async Task<IActionResult> Index(string searchString, int? page)
         {
-            // Garder le terme de recherche dans la ViewData pour le renvoyer au formulaire
+            // Store the search term in ViewData to retain it in the form and pagination links
             ViewData["CurrentFilter"] = searchString;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // Requête de base pour récupérer tous les stagiaires
-            var stagiaires = from s in _context.Stagiaires
-                             select s;
+            // Get the user's role
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
-            // Appliquer le filtre de recherche si un terme est fourni
-            if (!String.IsNullOrEmpty(searchString))
+            // Base query to retrieve all stagiaires
+            var stagiaires = _context.Stagiaires.AsQueryable();
+
+            if (userRole == "Stagiaire")
             {
-                stagiaires = stagiaires.Where(s => s.Nom.Contains(searchString)
-                                                    || s.Prenom.Contains(searchString)
-                                                    || s.Cin.ToString().Contains(searchString)
-                                                    || s.Telephone.ToString().Contains(searchString)
-                                                    || s.Ecole.Contains(searchString)); // Correction de la comparaison pour Ecole
+                stagiaires = stagiaires.Where(s => s.Id.ToString() == userId);
             }
 
-            // Calculer la pagination
-            int pageNumber = page ?? 1; // Si la page est null, commencer par la page 1
-            int pageSize = 10; // Nombre d'éléments par page
+            // Apply the search filter
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                stagiaires = stagiaires.Where(s => s.Nom.Contains(searchString)
+                                                || s.Prenom.Contains(searchString)
+                                                || s.Cin.ToString().Contains(searchString)
+                                                || s.Telephone.ToString().Contains(searchString)
+                                                || s.Ecole.Contains(searchString)); // Ensure Ecole is compared correctly
+            }
 
-            // Appliquer la pagination après avoir filtré les résultats
+            // Pagination parameters
+            int pageNumber = page ?? 1; // Default to page 1 if null
+            int pageSize = 2;          // Number of items per page
+
+            // Apply pagination
             var paginatedStagiaires = await stagiaires.ToPagedListAsync(pageNumber, pageSize);
 
             return View(paginatedStagiaires);
@@ -76,10 +86,14 @@ namespace Gestion_Stagiaire.Controllers
         }
 
         // GET: Stagiaires/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            ViewBag.UserEmail = userEmail;
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -96,8 +110,8 @@ namespace Gestion_Stagiaire.Controllers
                     }
                     // Retrieve user information
                     string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var userEmail = User.Identity?.Name;
-
+                    //var userEmail = User.Identity?.Name;
+                    var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
                     if (!string.IsNullOrEmpty(userId))
                     {
                         Console.WriteLine($"Authenticated User ID: {userId}");
@@ -108,7 +122,7 @@ namespace Gestion_Stagiaire.Controllers
                             // Check if a Stagiaire with the same email already exists
                             var existingStagiaire = await _context.Stagiaires
                                 .FirstOrDefaultAsync(s => s.Email == userEmail);
-                            //  stagiaire.Email = userEmail;
+                            stagiaire.Email = userEmail;
 
 
                             if (existingStagiaire != null)
@@ -181,13 +195,14 @@ namespace Gestion_Stagiaire.Controllers
             {
                 return NotFound();
             }
+
             return View(stagiaire);
         }
 
         // POST: Stagiaires/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nom,Prenom,Cin,Telephone,Email,Ecole")] Stagiaire stagiaire, IFormFile Path_Photo, IFormFile Path_CV)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nom,Prenom,Cin,Telephone,Email,Ecole,Path_Photo,Path_CV")] Stagiaire stagiaire, IFormFile? Path_Photo, IFormFile? Path_CV)
         {
             if (id != stagiaire.Id)
             {
@@ -198,17 +213,72 @@ namespace Gestion_Stagiaire.Controllers
             {
                 try
                 {
-                    // Handle Photo upload
-                    if (!await HandleFileUpload(Path_Photo, stagiaire, "photos", "Path_Photo", ".png"))
+                    // Retrieve the existing record from the database
+                    var existingStagiaire = await _context.Stagiaires.FindAsync(id);
+                    if (existingStagiaire == null)
                     {
-                        return View(stagiaire);
+                        return NotFound();
                     }
 
-                    // Handle CV upload
-                    if (!await HandleFileUpload(Path_CV, stagiaire, "cvs", "Path_CV", ".pdf"))
+                    // Handle Photo upload if a new one is provided
+                    if (Path_Photo != null && Path_Photo.Length > 0)
                     {
-                        return View(stagiaire);
+                        var fileExtension = Path.GetExtension(Path_Photo.FileName).ToLower();
+                        if (fileExtension != ".png")
+                        {
+                            ModelState.AddModelError("Path_Photo", "La photo doit être un fichier .png.");
+                            return View(stagiaire);
+                        }
+
+                        var uploadsFolder = Path.Combine("wwwroot/uploads/photos");
+                        Directory.CreateDirectory(uploadsFolder);
+
+                        var filePath = Path.Combine(uploadsFolder, $"{stagiaire.Id}.png");  // Append "_photo" to avoid overwriting
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await Path_Photo.CopyToAsync(stream);
+                        }
+
+                        stagiaire.Path_Photo = $"{stagiaire.Id}.png"; // Update Path_Photo
                     }
+                    else
+                    {
+                        // Preserve the existing Path_Photo if no new photo is uploaded
+                        stagiaire.Path_Photo = existingStagiaire.Path_Photo;
+                    }
+
+                    // Handle CV upload if a new one is provided
+                    if (Path_CV != null && Path_CV.Length > 0)
+                    {
+                        var fileExtension = Path.GetExtension(Path_CV.FileName).ToLower();
+                        if (fileExtension != ".pdf")
+                        {
+                            ModelState.AddModelError("Path_CV", "Le CV doit être un fichier .pdf.");
+                            return View(stagiaire);
+                        }
+
+                        var uploadsFolder = Path.Combine("wwwroot/uploads/cvs");
+                        Directory.CreateDirectory(uploadsFolder);
+
+                        var filePath = Path.Combine(uploadsFolder, $"{stagiaire.Id}.pdf");  // Append "_cv" to avoid overwriting
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await Path_CV.CopyToAsync(stream);
+                        }
+
+                        stagiaire.Path_CV = $"{stagiaire.Id}.pdf"; // Update Path_CV
+                    }
+                    else
+                    {
+                        // Preserve the existing Path_CV if no new CV is uploaded
+                        stagiaire.Path_CV = existingStagiaire.Path_CV;
+                    }
+
+                    // Ensure no conflicting instances of the same entity are tracked
+                    _context.Entry(existingStagiaire).State = EntityState.Detached;
+
+                    // Update the Stagiaire with the new values
+
 
                     _context.Update(stagiaire);
                     await _context.SaveChangesAsync();
@@ -226,6 +296,7 @@ namespace Gestion_Stagiaire.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(stagiaire);
         }
 
@@ -246,6 +317,7 @@ namespace Gestion_Stagiaire.Controllers
 
             return View(stagiaire);
         }
+
 
         // POST: Stagiaires/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -342,3 +414,4 @@ namespace Gestion_Stagiaire.Controllers
         }
     }
 }
+

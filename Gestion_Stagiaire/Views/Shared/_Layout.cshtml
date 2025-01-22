@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Gestion_Stagiaire.styles.css" asp-append-version="true" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
 
 
@@ -28,27 +30,60 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Accueil</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i> <!-- Icône de maison -->
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="https://www.wicmicgroup.com/">À Propos</a>
+                            <a class="nav-link text-dark" href="https://www.wicmicgroup.com/" >À Propos</a>
                         </li>
+
+                        @if (User.IsInRole("Admin") )
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Type_Stage" asp-action="Index">Type stage</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Departements" asp-action="Index">Département</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Status" asp-action="Index">Statut</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/AdminRegister">Ajouter Utilisateurs</a>
+
+                            </li>
+                        }
+                        @if (User.IsInRole("Rh"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Stagiaire"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index" >Mon Profil</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index" >Mes Demandes </a>
+                            </li>
+
+                        }
+
                        
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Type_Stage" asp-action="Index">Type des stages</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Departements" asp-action="Index">Departement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Status" asp-action="Index">Statut</a>
-                        </li>
+
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -98,19 +133,11 @@
             <div class="col-md-6 text-center text-md-start mb-3">
                 <h5 class="text-uppercase">Liens rapides</h5>
                 <ul class="list-inline">
-                    <li class="list-inline-item"><a href="/internships" class="text-light">Explorer les Stages</a></li>
-                    <li class="list-inline-item"><a href="/admin" class="text-light">Gérer les Stages</a></li>
-                    <li class="list-inline-item"><a href="/about" class="text-light">À Propos</a></li>
+                        <li class="list-inline-item"><a class="text-light" asp-area="" asp-controller="DemandeStages" asp-action="Index">Gérer les Demandes</a></li>
+                        <li class="list-inline-item"><a class="text-light" href="https://www.wicmicgroup.com/">À Propos</a></li>
                 </ul>
             </div>
-            <div class="col-md-6 text-center text-md-end">
-                <h5 class="text-uppercase">Partenaires</h5>
-                <ul class="list-inline">
-                    <li class="list-inline-item"><a href="https://www.partner1.com" class="text-light">Partner 1</a></li>
-                    <li class="list-inline-item"><a href="https://www.partner2.com" class="text-light">Partner 2</a></li>
-                    <li class="list-inline-item"><a href="https://www.partner3.com" class="text-light">Partner 3</a></li>
-                </ul>
-            </div>
+
         </div>
 
         <!-- Troisième rangée : Copyright -->

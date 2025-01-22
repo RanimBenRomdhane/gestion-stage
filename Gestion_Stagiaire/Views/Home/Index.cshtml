@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["Title"] = "Page d'accueil";
+﻿@using Microsoft.AspNetCore.Identity
+
+@{
+    ViewData["Title"] = "Bienvenue sur WicMix - Plateforme de Stages";
+
 }
 
 <!DOCTYPE html>
@@ -16,7 +19,6 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            
             color: #333;
             margin: 0;
             padding: 0;
@@ -37,19 +39,19 @@
             max-width: 500px;
         }
 
-        .hero-text h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #333;
-            line-height: 1.2;
-            margin-bottom: 20px;
-        }
+            .hero-text h1 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                color: #333;
+                line-height: 1.2;
+                margin-bottom: 20px;
+            }
 
-        .hero-text p {
-            font-size: 1.2rem;
-            font-weight: 300;
-            margin-top: 15px;
-        }
+            .hero-text p {
+                font-size: 1.2rem;
+                font-weight: 300;
+                margin-top: 15px;
+            }
 
         .hero a {
             text-decoration: none;
@@ -61,10 +63,10 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        .hero a:hover {
-            background-color: #0e7b40;
-            transform: scale(1.05);
-        }
+            .hero a:hover {
+                background-color: #0e7b40;
+                transform: scale(1.05);
+            }
 
         /* Section Conteneur */
         .container {
@@ -81,21 +83,21 @@
             margin: 20px;
         }
 
-        .card:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            transform: translateY(-10px);
-        }
+            .card:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                transform: translateY(-10px);
+            }
 
-        .card h3 {
-            font-size: 1.6rem;
-            color: #333;
-            font-weight: 500;
-        }
+            .card h3 {
+                font-size: 1.6rem;
+                color: #333;
+                font-weight: 500;
+            }
 
-        .card p {
-            font-size: 1.1rem;
-            color: #555;
-        }
+            .card p {
+                font-size: 1.1rem;
+                color: #555;
+            }
 
         .cta-btn {
             background-color: #10b981;
@@ -107,10 +109,11 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        .cta-btn:hover {
-            background-color: #059669;
-            transform: scale(1.05);
-        }
+            .cta-btn:hover {
+                background-color: #059669;
+                transform: scale(1.05);
+                color:white;
+            }
 
         /* Section Image */
         .image-container {
@@ -118,55 +121,51 @@
             max-width: 50%;
         }
 
-        .image-container img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .image-container img:hover {
-            transform: scale(1.05);
-        }
+            .image-container img {
+                width: 100%;
+                height: auto;
+                border-radius: 8px;
+                transition: transform 0.3s ease;
+            }
 
     </style>
 </head>
 <body>
 
-<!-- Section Hero avec Image -->
-<section class="hero">
-    <div class="hero-text">
-        <h1>Bienvenue sur notre plateforme de stages</h1>
-        <p>Explorez des opportunités de stage passionnantes dans l'industrie textile. Rejoignez-nous et donnez un coup de pouce à votre carrière dès aujourd'hui !</p>
-        <a href="/internships" class="cta-btn">Explorer les Stages</a>
-    </div>
-    <div class="image-container">
-        <img src="images/Image2.png" alt="Stage Textile" />
-    </div>
-</section>
+    <!-- Section Hero avec Image -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Bienvenue à WicMic Plateforme d'Opportunités</h1>
+            <p>Découvrez des opportunités de stage enrichissantes dans l'industrie textile. Rejoignez-nous et boostez votre avenir professionnel !</p>
+            <a href="@Url.Action("Create", "DemandeStages")" class="cta-btn">Faire une demande de stage</a>
+        </div>
+        <div class="image-container">
+            <img src="images/Image2.png" alt="Stage Textile" />
+        </div>
+    </section>
 
-<!-- Section des Cartes -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <h3>Pour les Stagiaires</h3>
-                <p>Trouvez le stage qui correspond à vos compétences et à vos intérêts. Commencez votre parcours professionnel avec nous !</p>
-                <a href="/internships" class="cta-btn">Voir les Opportunités</a>
+    <!-- Section des Cartes -->
+    
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <h3>Consulter votre Profil</h3>
+                        <p>Complétez votre profil pour maximiser vos chances d'obtenir le stage de vos rêves.</p>
+                        <a href="@Url.Action("Index", "Stagiaires")" class="cta-btn">Voir mon Profil</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <h3>Consulter vos demandes</h3>
+                        <p>Suivez l'état de vos demandes de stage et consultez les réponses en temps réel.</p>
+                        <a href="@Url.Action("Index", "DemandeStages")" class="cta-btn">Voir mes demandes</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card">
-                <h3>Pour les Ressources Humaines</h3>
-                <p>Gérez les candidatures de stage, suivez les progrès et recrutez des talents parmi un groupe d'internes qualifiés.</p>
-                <a href="/admin" class="cta-btn">Gérer les Stages</a>
-            </div>
-        </div>
-    </div>
-</div>
-
+    
 
 
 </body>
 </html>
-

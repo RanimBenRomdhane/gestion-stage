@@ -8,8 +8,8 @@
     var userRoles = UserManager.GetRolesAsync(currentUser).Result;
     var isStagiaire = userRoles.Contains("Stagiaire");
 }
-<head><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-</head>
+
+
 @if (isStagiaire)
 {
     <h1 class="page-title">Créer Mon Profil</h1> 
@@ -59,7 +59,7 @@ else
                     {
                         <div class="form-group">
                             <label asp-for="Email" class="control-label label-bold"></label>
-                            <input asp-for="Email" class="form-control form-control-custom" readonly value="@useremail" />
+                            <input asp-for="Email" class="form-control form-control-custom" readonly value="@ViewBag.UserEmail" />
                         </div>
                     }
                     else
@@ -79,13 +79,13 @@ else
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Path_Photo" class="control-label label-bold">Photo</label>
+                        <label asp-for="Path_Photo" class="control-label label-bold">Photo</label><p style="color:indianred; font-size:small; display:inline"> (.png)</p>
                         <input asp-for="Path_Photo" class="form-control form-control-custom" type="file" />
                         <span asp-validation-for="Path_Photo" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="Path_CV" class="control-label label-bold">CV</label>
+                        <label asp-for="Path_CV" class="control-label label-bold">CV</label><p style="color:indianred; font-size:small; display:inline"> (.pdf)</p>
                         <input asp-for="Path_CV" class="form-control form-control-custom" type="file" />
                         <span asp-validation-for="Path_CV" class="text-danger"></span>
                     </div>
@@ -97,7 +97,7 @@ else
                  <!-- Bouton personnalisé -->
             <div class="form-group text-center mt-4">
                 <button type="submit" class="btn btn-custom">
-                    <i class="fas fa-save"></i> Confirmer votre profil
+                    <i class="fas fa-save"></i> Confirmer 
                 </button>
             </div>
             }
