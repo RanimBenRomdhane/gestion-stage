@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using System.Security.Principal;
+using Gestion_Stagiaire.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
 {
@@ -21,11 +25,18 @@ namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+
+
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, UserManager<IdentityUser> userManager, ApplicationDbContext context)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
+            _context = context;
+
         }
 
         /// <summary>
@@ -115,7 +126,23 @@ namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    if (User.IsInRole("Stagiaire"))
+                    {
+                        // Use the principal to get the user ID
+                        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            var stagiaire = await _context.Stagiaires.FirstOrDefaultAsync(s => s.Id.ToString() == userId);
+                            if (stagiaire == null)
+                            {
+                                return RedirectToAction("Create", "Stagiaires");
+                            }
+
+                        }
+                    }
+                    return RedirectToAction("Index", "Home");
+                   // return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {

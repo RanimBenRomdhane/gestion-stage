@@ -26,6 +26,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 builder.Services.AddControllersWithViews();
 
+
+/* Configuration de l'authentification 
 builder.Services.AddAuthentication(options =>
 {
     // Use Cookie as the default authentication scheme for sign-in and authentication
@@ -53,7 +55,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
-
+*/
 
 var app = builder.Build();
 app.UseHttpsRedirection();
