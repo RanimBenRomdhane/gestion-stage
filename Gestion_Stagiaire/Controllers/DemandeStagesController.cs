@@ -196,7 +196,7 @@ namespace Gestion_Stagiaire.Controllers
             var existingStagiaire = await _context.Stagiaires
     .FirstOrDefaultAsync(s => s.Id == Guid.Parse(userId));
 
-            if (existingStagiaire == null)
+            if (existingStagiaire == null && User.IsInRole("Stagiaire"))
             {
                 // The StagiaireId doesn't exist, handle accordingly (e.g., add new entry or throw an error)
                 ModelState.AddModelError(string.Empty, "The specified Stagiaire ID does not exist.");
