@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Gestion_Stagiaire.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
@@ -30,6 +32,7 @@ namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager; // Inject RoleManager
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -37,7 +40,9 @@ namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager) // Inject RoleManager
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context) // Inject RoleManager
+            
 
         {
             _userManager = userManager;
@@ -47,6 +52,7 @@ namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _context = context;
         }
 
         /// <summary>
@@ -154,7 +160,23 @@ namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if (User.IsInRole("Stagiaire"))
+                        {
+                            // Use the principal to get the user ID
+                           // var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                            if (!string.IsNullOrEmpty(userId))
+                            {
+                                var stagiaire = await _context.Stagiaires.FirstOrDefaultAsync(s => s.Id.ToString() == userId);
+                                if (stagiaire == null)
+                                {
+                                    return RedirectToAction("Create", "Stagiaires");
+                                }
+
+                            }
+                        }
+                        return RedirectToAction("Index", "Home");
+                        //  return LocalRedirect(returnUrl);
                     }
                 }
                 foreach (var error in result.Errors)

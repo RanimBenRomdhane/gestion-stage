@@ -57,7 +57,7 @@ namespace Gestion_Stagiaire.Controllers
 
             // Pagination parameters
             int pageNumber = page ?? 1; // Default to page 1 if null
-            int pageSize = 2;          // Number of items per page
+            int pageSize = 10;          // Number of items per page
 
             // Apply pagination
             var paginatedStagiaires = await stagiaires.ToPagedListAsync(pageNumber, pageSize);

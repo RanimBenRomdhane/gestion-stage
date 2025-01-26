@@ -137,7 +137,7 @@ else
                         <th>Statut</th>
                         <th>Demande Stage</th>
                         <th>Date Demande</th>
-                        <th>Departement</th>
+                        <th>Département</th>
                         <th>Encadrant</th>
                         <th>Titre Projet</th>
                         <th>Actions</th>
@@ -152,7 +152,7 @@ else
                             <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
                             <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
                                     <td>
-                            @if (item.Status.Reponse == "En Cours")
+                            @if (item.Status.Reponse == "En cours")
                             {
                                                     <button class="btn btn-secondary" disabled>En cours</button>
                             }
@@ -168,7 +168,8 @@ else
                             {
                                 @item.Status.Reponse
                             }
-                                    </td>                            <td>
+                             </td>                            
+                             <td>
                             @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
                             {
                                                     <a href="~/uploads/demandes/@item.Path_Demande_Stage?timestamp=@DateTime.Now.Ticks" target="_blank" class="btn btn-primary btn-sm voir-btn">Voir le fichier</a>

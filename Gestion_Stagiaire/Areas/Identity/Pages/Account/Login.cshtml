@@ -44,14 +44,21 @@
                             Se connecter
                         </button>
                     </div>
+                    <!-- Additional Links -->
+                    <div class="text-center mt-4">
+
+                        <p>
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Créer un nouveau compte</a>
+                        </p>
+                    </div>
 
                     <!-- Google Login Link -->
-                    <div class="text-center mt-3">
+                   <!-- <div class="text-center mt-3">
                         <a asp-controller="Account" asp-action="Login" class="google-login-link">
                             <i class="fab fa-google"></i> Connexion avec Google
                         </a>
 
-                    </div>
+                     </div> -->
                 </form>
             </section>
         </div>
