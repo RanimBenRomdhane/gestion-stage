@@ -1,0 +1,177 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@{
+    ViewData["Title"] = "Bienvenue à WicMic - Plateforme de Stages";
+
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome (pour les icônes) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="~/css/styles.css" rel="stylesheet" />
+   <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Gestion_Stagiaire.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Section Hero */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 50px; /* Diminuer le padding pour rapprocher du haut */
+            text-align: left;
+            animation: fadeIn 1.5s ease-in-out;
+            margin-top: -200px; /* Déplacer vers le haut */
+        }
+
+        .hero-text {
+            max-width: 500px;
+        }
+
+            .hero-text h1 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                color: #333;
+                line-height: 1.2;
+                margin-bottom: 20px;
+            }
+
+            .hero-text p {
+                font-size: 1.2rem;
+                font-weight: 300;
+                margin-top: 15px;
+            }
+
+        .hero a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #1d9f58;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+            .hero a:hover {
+                background-color: #0e7b40;
+                transform: scale(1.05);
+            }
+
+        /* Section Conteneur */
+        .container {
+            margin-top: 40px; /* Maintenir un léger espacement */
+            text-align: center;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            margin: 20px;
+        }
+
+            .card:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                transform: translateY(-10px);
+            }
+
+            .card h3 {
+                font-size: 1.6rem;
+                color: #333;
+                font-weight: 500;
+            }
+
+            .card p {
+                font-size: 1.1rem;
+                color: #555;
+            }
+
+        .cta-btn {
+            background-color: #10b981;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+            .cta-btn:hover {
+                background-color: #059669;
+                transform: scale(1.05);
+                color:white;
+            }
+
+        /* Section Image */
+        .image-container {
+            flex: 1;
+            max-width: 50%;
+        }
+
+            .image-container img {
+                width: 100%;
+                height: auto;
+                border-radius: 8px;
+                transition: transform 0.3s ease;
+            }
+
+    </style>
+</head>
+<body>
+
+    <!-- Section Hero avec Image -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Bienvenue à WicMic Plateforme d'Opportunités</h1>
+            <p>Découvrez des opportunités de stage enrichissantes dans l'industrie textile. Rejoignez-nous et boostez votre avenir professionnel !</p>
+            <a href="@Url.Action("Create", "DemandeStages")" class="cta-btn">Faire une demande de stage</a>
+        </div>
+        <div class="image-container">
+            <img src="images/Image2.png" alt="Stage Textile" />
+        </div>
+    </section>
+
+    <!-- Section des Cartes -->
+    
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <h3>Consulter votre Profil</h3>
+                        <p>Complétez votre profil pour maximiser vos chances d'obtenir le stage de vos rêves.</p>
+                        <a href="@Url.Action("Index", "Stagiaires")" class="cta-btn">Voir mon Profil</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <h3>Consulter vos demandes</h3>
+                        <p>Suivez l'état de vos demandes de stage et consultez les réponses en temps réel.</p>
+                        <a href="@Url.Action("Index", "DemandeStages")" class="cta-btn">Voir mes demandes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+
+</body>
+</html>

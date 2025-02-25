@@ -1,0 +1,174 @@
+﻿@model Gestion_Stagiaire.Models.Status
+
+@{
+    ViewData["Title"] = "Édition du Statut";
+}
+
+
+
+<body>
+    <h1>@ViewData["Title"]</h1>
+    <h4>Veuillez mettre à jour les informations du statut</h4>
+    <hr />
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <form asp-action="Edit" class="form-container shadow-light transition">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                    <!-- Champ caché pour l'ID -->
+                    <input type="hidden" asp-for="Id" />
+
+                    <!-- Champ pour le statut -->
+                    <div class="form-group mb-4">
+                        <label asp-for="Reponse" class="control-label">Réponse</label>
+                        <input asp-for="Reponse" class="form-control" />
+                        <span asp-validation-for="Reponse" class="text-danger"></span>
+                    </div>
+
+                    <!-- Bouton de sauvegarde -->
+                    <div class="form-group">
+                        <input type="submit" value="Enregistrer" class="btn btn-success w-100 transition" />
+                    </div>
+                </form>
+
+                <!-- Bouton Retour avec icône -->
+                <div class="text-center mt-4">
+                    <a asp-action="Index" class="btn-arrow">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+    }
+</body>
+
+
+<style>
+
+
+    h1 {
+        color: #2c3e50;
+        font-size: 2.8rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    h4 {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    .form-container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group label {
+        color: #34495e;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+
+        .form-control:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+        }
+
+    .btn {
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+    }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+    .btn-secondary {
+        background-color: #7f8c8d;
+        color: white;
+        border: none;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+        }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .transition:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .shadow-light {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style pour le bouton "Retour à la liste" en forme de flèche */
+    .btn-arrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: white;
+        background-color: #7f8c8d;
+        border-radius: 50px;
+        text-decoration: none;
+    }
+
+        .btn-arrow:hover {
+            background-color: white; /* Lors du hover, la couleur devient blanche */
+            color: #7f8c8d; /* Maintenir la couleur de texte d'origine */
+        }
+
+        .btn-arrow i {
+            margin-right: 8px;
+        }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50; /* Dark, elegant blue-gray */
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db; /* Underline with a modern blue */
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase; /* Optional: Make text all uppercase */
+        letter-spacing: 1px; /* Slightly increase spacing for a cleaner look */
+    }
+</style>

@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gestion_Stagiaire</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Gestion_Stagiaire.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/image1.png" alt="Logo" class="navbar-logo" /> <!-- Remplacez 'image1.png' par le nom exact de votre fichier d'image -->
+                    
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i> <!-- Icône de maison -->
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="https://www.wicmicgroup.com/" >À Propos</a>
+                        </li>
+
+                        @if (User.IsInRole("Admin") )
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Type_Stage" asp-action="Index">Type stage</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Departements" asp-action="Index">Département</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Status" asp-action="Index">Statut</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/AdminRegister">Ajouter Utilisateurs</a>
+
+                            </li>
+                        }
+                        @if (User.IsInRole("RH"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index">Stagiaire</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index">Demande Stage</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Stagiaire"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Stagiaires" asp-action="Index" >Mon Profil</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="DemandeStages" asp-action="Index" >Mes Demandes </a>
+                            </li>
+
+                        }
+
+                       
+
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+<footer class="footer bg-dark text-light py-5">
+    <div class="container">
+        <!-- Première rangée : Informations principales -->
+        <div class="row">
+            <div class="col-lg-4 text-center text-lg-start mb-4">
+                <img src="~/images/image1.png" alt="Logo" class="img-fluid mb-3" style="max-width: 150px;">
+               
+            </div>
+            <div class="col-lg-4 text-center mb-4">
+                <h5 class="text-uppercase mb-3">Contact</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-map-marker-alt"></i> Route de Metline, 7070 Ras Jebel, Bizerte</li>
+                    <li><i class="fas fa-phone"></i> +216 72 456 026</li>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:contact@wic-sa.com" class="text-warning">contact@wic-sa.com</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 text-center text-lg-end mb-4">
+                <h5 class="text-uppercase mb-3">Suivez-nous</h5>
+                <div class="d-flex justify-content-center justify-content-lg-end">
+                    <a href="https://www.facebook.com/wicmicgroup" target="_blank" class="text-light mx-2">
+                        <i class="fab fa-facebook-f fa-2x"></i>
+                    </a>
+                    <a href="https://www.instagram.com/wicmicgroup/" target="_blank" class="text-light mx-2">
+                        <i class="fab fa-instagram fa-2x"></i>
+                    </a>
+                    <a href="https://tn.linkedin.com/company/washing-international-company" target="_blank" class="text-light mx-2">
+                        <i class="fab fa-linkedin fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deuxième rangée : Liens rapides -->
+        <div class="row border-top pt-4 mt-4">
+            <div class="col-md-6 text-center text-md-start mb-3">
+                <h5 class="text-uppercase">Liens rapides</h5>
+                <ul class="list-inline">
+                        <li class="list-inline-item"><a class="text-light" asp-area="" asp-controller="DemandeStages" asp-action="Index">Gérer les Demandes</a></li>
+                        <li class="list-inline-item"><a class="text-light" href="https://www.wicmicgroup.com/">À Propos</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Troisième rangée : Copyright -->
+        <div class="row mt-4">
+            <div class="col text-center">
+                <small>&copy; 2025 WicMic - Tous droits réservés.</small>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

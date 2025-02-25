@@ -1,0 +1,199 @@
+﻿@model Gestion_Stagiaire.Models.Status
+
+@{
+    ViewData["Title"] = "Supprimer un Statut";
+}
+
+
+<body>
+
+<h1>@ViewData["Title"]</h1>
+<h4 class="text-center">Êtes-vous sûr de vouloir supprimer ce statut ?</h4>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="form-container shadow-light transition">
+                <!-- Affichage des informations du statut -->
+                <h4 class="text-center">Statut à supprimer</h4>
+                <hr />
+                <div class="form-group">
+                    <label for="Reponse">Réponse</label>
+                    <input type="text" class="form-control" id="Reponse" value="@Model.Reponse" disabled />
+                </div>
+
+                <br />
+
+                <!-- Formulaire de suppression -->
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group mb-4">
+                        <input type="submit" value="Supprimer" class="btn btn-danger w-100 transition" />
+                    </div>
+                </form>
+            </div>
+
+            <!-- Bouton Retour à la liste placé en dessous du formulaire -->
+            <div class="text-center mt-4">
+                <a asp-action="Index" class="btn btn-secondary transition btn-arrow">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h2>Êtes-vous sûr de vouloir supprimer ce statut ?</h2>
+        <form id="deleteForm" method="post" action="/Status/Delete">
+            <input type="hidden" id="deleteId" name="id" />
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+            <button type="button" class="btn btn-secondary" id="closeModal">Annuler</button>
+        </form>
+    </div>
+</div>
+
+
+
+</body>
+
+
+<style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    /* Button Styles */
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+    .btn-secondary {
+        background-color: #7f8c8d;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+        }
+
+    /* General Styles */
+    h1 {
+        color: #2c3e50;
+        font-size: 2.8rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    h4 {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    .form-container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group label {
+        color: #34495e;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+
+        .form-control:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+        }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .transition:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .shadow-light {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-arrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: white;
+        background-color: #7f8c8d;
+        border-radius: 50px;
+        text-decoration: none;
+    }
+
+        .btn-arrow:hover {
+            background-color: white;
+            color: #7f8c8d;
+        }
+
+        .btn-arrow i {
+            margin-right: 8px;
+        }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db;
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>

@@ -1,0 +1,377 @@
+﻿@model IEnumerable<Gestion_Stagiaire.Models.DemandeStage>
+
+
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+
+@{
+    ViewData["Title"] = "Demandes de Stage";
+    // Initialize variables
+    bool isStagiaire = false;
+    bool isAdmin = false;
+
+    // Use asynchronous operations
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser != null)
+        {
+            var userRoles = await UserManager.GetRolesAsync(currentUser);
+            isStagiaire = userRoles.Contains("Stagiaire");
+            isAdmin = userRoles.Contains("Admin");
+        }
+    }
+}
+@if (isStagiaire)
+{
+        <h1 class="page-title">Mes Demandes </h1>
+<p class="d-flex justify-content-end">
+    <a asp-action="Create" class="btn btn-primary btn-action">
+        <i class="fas fa-plus"></i> Ajouter une Nouvelle Demande
+    </a>
+</p>
+        <!-- Tableau dynamique avec animations -->
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="demandesTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Stagiaire</th>
+                        <th>Type de Stage</th>
+                        <th>Date de Début</th>
+                        <th>Date de Fin</th>
+                        <th>Statut</th>
+                        <th>Demande de Stage</th>
+                        <th>Date Demande</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                        <tr>
+                            <td><strong>@item.Stagiaire.Nom @item.Stagiaire.Prenom</strong></td>
+                            <td>@Html.DisplayFor(modelItem => item.Type_Stage.Stage_Type)</td>
+                            <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
+                            <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
+                            <td>
+                            @if (item.Status.Reponse == "En cours")
+                            {
+                                        <button class="btn btn-secondary" disabled>En cours</button>
+                            }
+                            else if (item.Status.Reponse == "Rejeté")
+                            {
+                                        <button class="btn btn-danger" disabled>Rejeté</button>
+                            }
+                            else if (item.Status.Reponse == "Accepté")
+                            {
+                                        <button class="btn btn-success" disabled>Accepté</button>
+                            }
+                            else
+                            {
+                                        @item.Status.Reponse
+                            }
+                            </td>
+                            <td>
+                            @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
+                            {
+                                        <a href="~/uploads/demandes/@item.Path_Demande_Stage?timestamp=@DateTime.Now.Ticks" target="_blank" class="btn btn-primary btn-sm voir-btn">Voir le fichier</a>
+                            }
+                            else
+                            {
+                                        <span>Aucun fichier disponible</span>
+                            }
+                            </td>
+                            <td>@item.Date_Demande.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="action-icons">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="details-icon" title="Détails">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                            </td>
+                        </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+                <div class="back-button-wrapper">
+        <a asp-action="Index" asp-controller="Home" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+    </div>
+}
+else
+{
+        <h1 class="page-title">Demandes de Stage</h1>
+
+        <!-- Boutons à droite -->
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="ExportToExcel" class="btn btn-success btn-action">
+                <i class="fas fa-file-excel"></i> Exporter vers Excel
+            </a>
+            <a asp-action="Create" class="btn btn-primary btn-action">
+                <i class="fas fa-plus"></i> Ajouter une Nouvelle Demande
+            </a>
+        </div>
+
+        <!-- Barre de recherche à gauche -->
+        <form method="get" asp-action="Index" class="search-bar d-flex flex-grow-1">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Rechercher ..." oninput="filterResults()" value="@ViewData["CurrentFilter"]" />
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="demandesTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Stagiaire</th>
+                        <th>Type Stage</th>
+                        <th>Date Début</th>
+                        <th>Date Fin</th>
+                        <th>Statut</th>
+                        <th>Demande Stage</th>
+                        <th>Date Demande</th>
+                        <th>Département</th>
+                        <th>Encadrant</th>
+                        <th>Titre Projet</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                        <tr>
+                            <td><strong>@item.Stagiaire.Nom @item.Stagiaire.Prenom</strong></td>
+                            <td>@Html.DisplayFor(modelItem => item.Type_Stage.Stage_Type)</td>
+                            <td>@item.Date_Debut.ToString("yyyy-MM-dd")</td>
+                            <td>@item.Date_Fin.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                            @if (item.Status.Reponse == "En cours")
+                            {
+                                                    <button class="btn btn-secondary" disabled>En cours</button>
+                            }
+                            else if (item.Status.Reponse == "Rejeté")
+                            {
+                                                    <button class="btn btn-danger" disabled>Rejeté</button>
+                            }
+                            else if (item.Status.Reponse == "Accepté")
+                            {
+                                                    <button class="btn btn-success" disabled>Accepté</button>
+                            }
+                            else
+                            {
+                                @item.Status.Reponse
+                            }
+                             </td>                            
+                             <td>
+                            @if (!string.IsNullOrEmpty(item.Path_Demande_Stage))
+                            {
+                                                    <a href="~/uploads/demandes/@item.Path_Demande_Stage?timestamp=@DateTime.Now.Ticks" target="_blank" class="btn btn-primary btn-sm voir-btn">Voir le fichier</a>
+                            }
+                            else
+                            {
+                                        <span>Aucun fichier disponible</span>
+                            }
+                            </td>
+                            <td>@item.Date_Demande.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@Html.DisplayFor(modelItem => item.Departement.Nom_Departement)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Encadrant)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Titre_Projet)</td>
+                            <td class="action-icons">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="edit-icon" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="details-icon" title="Détails">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            @if (isAdmin)
+                            {
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="delete-icon" title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                            }
+                            </td>
+                        </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+                
+                <div class="back-button-wrapper">
+        <a asp-action="Index" asp-controller="Home" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+    </div>
+}
+
+@section Scripts {
+        <script>
+            function filterResults() {
+                const input = document.getElementById('searchInput');
+                const filter = input.value.toLowerCase();
+                const table = document.getElementById('demandesTable');
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+                for (let i = 0; i < rows.length; i++) {
+                    const cells = rows[i].getElementsByTagName('td');
+                    let match = false;
+                    for (let j = 0; j < cells.length; j++) {
+                        if (cells[j].textContent.toLowerCase().includes(filter)) {
+                            match = true;
+                            break;
+                        }
+                    }
+                    rows[i].style.display = match ? '' : 'none';
+                }
+            }
+        </script>
+
+        <style>
+    /* styles.css */
+
+    /* General Styles */
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db;
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+        .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .btn-action {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: bold;
+    }
+
+    .table-hover tr:hover {
+        background-color: #f9f9f9;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .voir-btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .voir-btn:hover {
+        background-color: #2980b9;
+    }
+
+    .action-icons a {
+        text-decoration: none;
+        font-size: 20px;
+        transition: color 0.3s;
+    }
+
+    .edit-icon i {
+        color: #007bff;
+    }
+
+    .edit-icon i:hover {
+        color: #0056b3;
+    }
+
+    .details-icon i {
+        color: gray;
+    }
+
+    .details-icon i:hover {
+        color: #6c757d;
+    }
+
+    .delete-icon i {
+        color: indianred;
+    }
+
+    .delete-icon i:hover {
+        color: darkred;
+    }
+
+    /* Responsive and animations */
+    .table-responsive {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .search-bar .input-group {
+        max-width: 400px;
+        margin-bottom: 15px;
+    }
+        /* Ajout dans ton fichier styles.css */
+    .btn-secondary {
+        background-color: darkgray; /* Gris */
+    }
+
+    .btn-danger {
+        background-color: #e74c3c; /* Rouge */
+    }
+
+
+
+    .btn[disabled] {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+                   /* Bouton Retour */
+                .back-button-wrapper {
+                    width: 100%; /* Prend toute la largeur disponible */
+                    display: flex;
+                    justify-content: center;
+                    margin-top: -10px;
+                }
+
+                .back-button {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 10px 20px;
+                    font-size: 1rem;
+                    color: white;
+                    background-color: #7f8c8d;
+                    border-radius: 50px;
+                    text-decoration: none;
+                    transition: all 0.3s ease;
+                }
+
+                .back-button:hover {
+                    background-color: white;
+                    color: #7f8c8d;
+                    text-decoration: none;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                }
+
+                .back-button i {
+                    margin-right: 8px;
+                }
+        </style>
+}

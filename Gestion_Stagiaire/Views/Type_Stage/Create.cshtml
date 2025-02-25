@@ -1,0 +1,167 @@
+﻿@model Gestion_Stagiaire.Models.Type_Stage
+
+@{
+    ViewData["Title"] = "Ajouter un Type de Stage";
+}
+
+
+<body>
+    <h1>@ViewData["Title"]</h1>
+    <h4>Veuillez entrer les informations du type de stage</h4>
+    <hr />
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <form asp-action="Create" class="form-container shadow-light transition">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                    <!-- Champ pour le type de stage -->
+                    <div class="form-group mb-4">
+                        <label asp-for="Stage_Type" class="control-label">Type de Stage</label>
+                        <input asp-for="Stage_Type" class="form-control" />
+                        <span asp-validation-for="Stage_Type" class="text-danger"></span>
+                    </div>
+
+                    <!-- Bouton de création -->
+                    <div class="form-group">
+                        <input type="submit" value="Ajouter" class="btn btn-success w-100 transition" />
+                    </div>
+                </form>
+                <!-- Bouton Retour à la liste placé juste après le formulaire -->
+                <div class="text-center mt-4">
+                    <a asp-action="Index" class="btn btn-secondary transition btn-arrow">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @section Scripts {
+    }
+</body>
+
+<style>
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50; /* Dark, elegant blue-gray */
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db; /* Underline with a modern blue */
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase; /* Optional: Make text all uppercase */
+        letter-spacing: 1px; /* Slightly increase spacing for a cleaner look */
+    }
+
+    h1 {
+        color: #2c3e50;
+        font-size: 2.8rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    h4 {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    .form-container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group label {
+        color: #34495e;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+
+        .form-control:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+        }
+
+    .btn {
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+    }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+    .btn-secondary {
+        background-color: #7f8c8d;
+        color: white;
+        border: none;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+        }
+
+    .btn-arrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: white;
+        background-color: #7f8c8d;
+        border-radius: 50px;
+        text-decoration: none;
+    }
+
+        .btn-arrow:hover {
+            background-color: white;
+            color: #7f8c8d; /* Couleur d'origine du texte */
+        }
+
+        .btn-arrow i {
+            margin-right: 8px;
+        }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .transition:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .shadow-light {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>

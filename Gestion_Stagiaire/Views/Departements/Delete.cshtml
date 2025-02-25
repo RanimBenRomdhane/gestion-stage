@@ -1,0 +1,180 @@
+﻿@model Gestion_Stagiaire.Models.Departement
+
+@{
+    ViewData["Title"] = "Supprimer un Département";
+}
+
+
+
+<body>
+    <h1 >@ViewData["Title"]</h1>
+    <h4 class="text-center">Êtes-vous sûr de vouloir supprimer ce département ?</h4>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="form-container shadow-light transition">
+                    <!-- Affichage des informations du département avec un label personnalisé -->
+                    <h4 class="text-center">Département à supprimer</h4>
+                    <hr />
+                    <div class="form-group">
+                        <label for="Nom_Departement">Nom du Département</label>
+                        <input type="text" class="form-control" id="Nom_Departement" value="@Model.Nom_Departement" disabled />
+                    </div>
+                    <br />
+                    <!-- Formulaire de suppression -->
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="form-group mb-4">
+                            <input type="submit" value="Supprimer" class="btn btn-danger w-100 transition" />
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bouton Retour à la liste placé en dessous du formulaire -->
+                <div class="text-center mt-4">
+                    <a asp-action="Index" class="btn btn-secondary transition btn-arrow">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+    }
+</body>
+
+
+
+<style>
+    h1 {
+        color: #2c3e50;
+        font-size: 2.8rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    h4 {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    .form-container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group label {
+        color: #34495e;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+
+        .form-control:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+        }
+
+    .btn {
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+    }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+    .btn-secondary {
+        background-color: #7f8c8d;
+        color: white;
+        border: none;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+        }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .transition:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .shadow-light {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-arrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: white;
+        background-color: #7f8c8d;
+        border-radius: 50px;
+        text-decoration: none;
+    }
+
+        .btn-arrow:hover {
+            background-color: white;
+            color: #7f8c8d;
+        }
+
+        .btn-arrow i {
+            margin-right: 8px;
+        }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db;
+        display: inline-block;
+        padding-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>

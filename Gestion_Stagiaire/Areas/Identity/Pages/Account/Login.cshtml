@@ -1,0 +1,208 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Se connecter";
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+        <div class="col-md-5">
+            <section class="p-5 rounded form-container">
+                <h1 class="text-center title-text">@ViewData["Title"]</h1>
+                </hr>
+                <form id="account" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <!-- Email Input -->
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Email" class="form-control custom-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="Input.Email">Adresse e-mail</label>
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Password" type="password" class="form-control custom-input" autocomplete="current-password" aria-required="true" placeholder="Mot de passe" />
+                        <label asp-for="Input.Password">Mot de passe</label>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+
+
+                    <!-- Submit Button -->
+                    <div>
+                        <button id="login-submit" type="submit" class="w-100 btn btn-lg custom-btn">
+                            Se connecter
+                        </button>
+                    </div>
+
+                    <!-- Google Login Link -->
+                    <div class="text-center mt-3">
+                        <a asp-controller="Account" asp-action="Login" class="google-login-link">
+                            <i class="fab fa-google"></i> Connexion avec Google
+                        </a>
+
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    @section Scripts {
+            <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>
+
+    <!-- CSS à la fin du fichier -->
+    <style>
+        /* Global page styling */
+        html {
+            font-size: 14px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8; /* Fond très clair */
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-content-center {
+            justify-content: center;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .min-vh-100 {
+            min-height: 100vh;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa;
+        }
+
+        /* Form container styling */
+        .form-container {
+            background-color: white; /* Fond blanc pour le formulaire */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.5s ease-in-out;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: -80px;
+            transition: transform 0.5s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Title styling */
+        .title-text {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 3rem;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        /* Input styles */
+        .custom-input {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            padding: 15px;
+            border-radius: 10px;
+            color: darkgray;
+        }
+
+        .custom-input:hover {
+            background-color: #f5f5f5;
+            border: 1px solid #3498db;
+        }
+
+        /* Button styles */
+        .custom-btn {
+            background-color: indianred;
+            color: #fff;
+            border-radius: 50px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            font-weight: bold;
+            padding: 12px 0;
+        }
+
+        .custom-btn:hover {
+            transform: scale(1.1);
+            background-color: #c0392b;
+            color: #fff;
+        }
+
+        /* Google login link styles */
+        .google-login-link {
+            color: indianred;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 50px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+        .google-login-link:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.1);
+        }
+
+        .google-login-link i {
+            margin-right: 8px;
+        }
+
+        /* Links */
+        a {
+            color: darkgray;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #e74c3c;
+        }
+
+        /* Validation error text */
+        .text-danger {
+            color: #e74c3c;
+        }
+
+        /* Modifier la couleur de la case à cocher */
+        .form-check-input:checked {
+            background-color: red;
+            border-color: red;
+        }
+
+        .form-check-input:focus {
+            border-color: red;
+            box-shadow: 0 0 0 0.25rem rgba(255, 0, 0, 0.25);
+        }
+
+        .form-check-label {
+            color: #333;
+        }
+
+    </style>
+
