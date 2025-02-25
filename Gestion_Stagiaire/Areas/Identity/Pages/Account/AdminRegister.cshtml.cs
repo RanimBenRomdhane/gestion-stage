@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Gestion_Stagiaire.Areas.Identity.Pages.Account
 {
-    [Authorize(Roles = "Admin")]
+  [Authorize(Roles = "Admin")]
     public class AdminRegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
